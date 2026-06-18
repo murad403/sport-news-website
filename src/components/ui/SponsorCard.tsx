@@ -53,7 +53,7 @@ const SponsorCard: React.FC<SponsorCardProps> = ({ name, logoText, tier, descrip
       </div>
 
       <h3 className="font-headline text-xl font-bold text-brand-dark mb-1">{name}</h3>
-      <p className="text-sm text-neutral-600 flex-grow mb-4">{description}</p>
+      <p className="text-sm text-neutral-600 grow mb-4">{description}</p>
 
       {websiteUrl && (
         <a

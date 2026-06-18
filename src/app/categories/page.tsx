@@ -61,7 +61,7 @@ export default function CategoriesIndexPage() {
             </div>
             
             {/* Background Glow */}
-            <div className={`absolute bottom-0 right-0 h-1.5 w-full bg-gradient-to-r ${cat.color}`} />
+            <div className={`absolute bottom-0 right-0 h-1.5 w-full bg-linear-to-r ${cat.color}`} />
           </Link>
         ))}
       </div>

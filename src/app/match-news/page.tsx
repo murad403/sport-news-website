@@ -97,7 +97,7 @@ export default function MatchNewsPage() {
             <div className="flex flex-col gap-3.5">
               {upcomingFixtures.map((fixture) => (
                 <div key={fixture.id} className="flex items-center justify-between border-b border-neutral-50 pb-3 last:border-0 last:pb-0 text-xs font-semibold">
-                  <div className="flex flex-col gap-1 text-neutral-700 min-w-0 flex-grow pr-2">
+                  <div className="flex flex-col gap-1 text-neutral-700 min-w-0 grow pr-2">
                     <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">{fixture.league}</span>
                     <span className="truncate flex items-center gap-1">
                       <span>{getTeamIcon(fixture.homeTeam)}</span> {fixture.homeTeam}
