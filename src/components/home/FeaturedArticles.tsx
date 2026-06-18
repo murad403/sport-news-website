@@ -1,0 +1,24 @@
+import React from "react"
+import { Article } from "@/lib/types"
+import ArticleCard from "../articles/ArticleCard"
+
+export interface FeaturedArticlesProps {
+  articles: Article[]
+}
+
+const FeaturedArticles: React.FC<FeaturedArticlesProps> = ({ articles }) => {
+  return (
+    <div className="w-full my-8 select-none">
+      <h3 className="font-headline text-2xl md:text-3xl font-extrabold uppercase text-brand-dark border-b-2 border-brand-red pb-2 mb-6">
+        Featured Stories
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {articles.map((article) => (
+          <ArticleCard key={article.id} article={article} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default FeaturedArticles

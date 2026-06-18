@@ -1,2 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --color-brand-red: #E30613;
+  --color-brand-dark: #0D0D1A;
+  --font-headline: "Bebas Neue", "Oswald", sans-serif;
+  --font-body: "Inter", sans-serif;
+  
+  --animate-ticker: ticker 30s linear infinite;
+
+  @keyframes ticker {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-body);
+  }
+  body {
+    background-color: #f5f5f5;
+    color: #1a1a1a;
+  }
+}
+
+/* Custom scrollbar utility for live scores bar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0d0d1a;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e30613;
+  border-radius: 2px;
+}
