@@ -56,7 +56,7 @@ const ScoreWidget: React.FC<ScoreWidgetProps> = ({ match }) => {
       </div>
 
       {/* 2. Center: Teams & Scores */}
-      <div className="flex items-center justify-center gap-4 md:gap-8 flex-grow">
+      <div className="flex items-center justify-center gap-4 md:gap-8 grow">
         {/* Home Team */}
         <div className="flex items-center gap-2 md:gap-3 text-right flex-1 justify-end min-w-0">
           <span className="text-sm md:text-base font-bold text-brand-dark truncate">{match.homeTeam}</span>

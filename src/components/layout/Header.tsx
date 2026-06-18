@@ -1,13 +1,13 @@
 "use client"
-
 import React, { useState } from "react"
 import Link from "next/link"
 import { Menu, User } from "lucide-react"
 import SearchBar from "../ui/SearchBar"
 import Button from "../ui/Button"
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "../ui/Sheet"
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "../ui/Dialog"
+import { Dialog, DialogTrigger, DialogContent } from "../ui/Dialog"
 import Input from "../ui/Input"
+
 
 const Header: React.FC = () => {
   const [email, setEmail] = useState("")
