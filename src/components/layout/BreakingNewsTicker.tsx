@@ -12,7 +12,7 @@ const BreakingNewsTicker: React.FC = () => {
 
       {/* Marquee Container */}
       <div className="relative w-full h-full flex items-center overflow-hidden">
-        <div className="absolute flex whitespace-nowrap items-center gap-12 text-white text-xs md:text-sm font-semibold animate-ticker hover:[animation-play-state:paused] cursor-pointer">
+        <div className="absolute flex whitespace-nowrap items-center gap-12 text-white text-xs md:text-sm font-semibold animate-ticker hover:[animation-play-state:paused] cursor-pointer duration-3000">
           {breakingNewsHeadlines.map((headline, idx) => (
             <div key={idx} className="flex items-center gap-2">
               <span>{headline}</span>
