@@ -14,7 +14,8 @@ const navItems = [
   { label: "F1", href: "/categories/F1" },
   { label: "Player Updates", href: "/player-updates" },
   { label: "Statistics", href: "/statistics" },
-  { label: "Sponsors", href: "/sponsors" }
+  { label: "Sponsors", href: "/sponsors" },
+  { label: "Community", href: "/community" }
 ]
 
 const Navigation: React.FC = () => {
@@ -38,7 +39,7 @@ const Navigation: React.FC = () => {
     >
       <div className="max-w-5xl mx-auto px-4">
         {/* Horizontal scrollable container for mobile, standard centered tabs for desktop */}
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-2 md:py-0 md:h-12">
+        <div className="flex items-center justify-between gap-0.5 md:gap-1 overflow-x-auto no-scrollbar py-2 md:py-0 md:h-12">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
@@ -49,7 +50,7 @@ const Navigation: React.FC = () => {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "relative flex items-center h-full px-4 py-2 md:py-0 text-xs md:text-sm font-bold uppercase tracking-wider whitespace-nowrap transition-colors hover:text-brand-red cursor-pointer",
+                  "relative flex items-center h-full px-2 md:px-2.5 lg:px-3 py-2 md:py-0 text-[11px] md:text-xs lg:text-[13px] font-bold uppercase tracking-wider whitespace-nowrap transition-colors hover:text-brand-red cursor-pointer",
                   isActive
                     ? "text-brand-red font-extrabold border-b-2 border-brand-red md:h-12"
                     : "text-brand-dark"

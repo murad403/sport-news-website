@@ -64,6 +64,7 @@ const Header: React.FC = () => {
     { label: "Player Updates", href: "/player-updates" },
     { label: "Statistics", href: "/statistics" },
     { label: "Sponsors", href: "/sponsors" },
+    { label: "Community", href: "/community" },
     { label: "About Us", href: "/about" },
     { label: "Contact", href: "/contact" }
   ]

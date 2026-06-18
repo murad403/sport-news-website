@@ -132,7 +132,7 @@ const PlayerStatsTable: React.FC = () => {
               </div>
 
               {/* Stats Body */}
-              <div className="p-5 flex-grow grid grid-cols-3 gap-4 border-b border-neutral-100 bg-neutral-50/50">
+              <div className="p-5 grow grid grid-cols-3 gap-4 border-b border-neutral-100 bg-neutral-50/50">
                 <div className="flex flex-col items-center justify-center p-3 bg-white border border-neutral-150 rounded-lg text-center shadow-xs">
                   <span className="text-xs font-extrabold text-neutral-400 uppercase mb-1">Matches</span>
                   <span className="text-xl font-bold font-headline text-brand-dark">{player.matches}</span>
