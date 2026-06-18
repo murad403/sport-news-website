@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from "react"
 import Link from "next/link"
-import { Menu, User } from "lucide-react"
+import { Menu, User, Mail } from "lucide-react"
 import SearchBar from "../ui/SearchBar"
 import Button from "../ui/Button"
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "../ui/Sheet"
@@ -147,23 +147,51 @@ const Header: React.FC = () => {
               {authMode === "signin" ? (
                 authMethod === "list" ? (
                   /* View 1: Sign In List Options */
-                  <div className="flex flex-col items-center gap-4 text-center select-none">
-                    <h2 className="text-xl font-bold text-brand-dark mb-2">Sign in</h2>
+                  <div className="flex flex-col items-center gap-3 w-full text-center select-none">
+                    <h2 className="text-2xl font-bold text-brand-dark mb-3">Sign in</h2>
                     
-                    <button onClick={() => alert("Sign in with Apple")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Sign in with Apple
-                    </button>
-                    <button onClick={() => alert("Log in with Facebook")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Log in with Facebook
-                    </button>
-                    <button onClick={() => alert("Sign in with Google")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Sign in with Google
-                    </button>
-                    <button onClick={() => setAuthMethod("email")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Log in with email and password
+                    <button
+                      onClick={() => alert("Sign in with Apple")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-black hover:bg-neutral-900 text-white text-sm font-semibold rounded-lg shadow-xs transition-colors cursor-pointer"
+                    >
+                      <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.54 9.103 1.51 12.06 1.005 1.45 2.187 3.068 3.757 3.007 1.516-.06 2.09-.98 3.92-.98 1.82 0 2.347.98 3.93.95 1.618-.03 2.654-1.47 3.652-2.922 1.153-1.688 1.63-3.32 1.66-3.41-.03-.01-3.178-1.22-3.21-4.82-.03-3.02 2.47-4.47 2.58-4.54-1.42-2.08-3.6-2.31-4.38-2.36-2.062-.167-3.24 1.078-4.09 1.078zM16.14 3.75c.828-1.006 1.386-2.41 1.233-3.812-1.2.05-2.656.8-3.518 1.802-.74.85-1.39 2.27-1.216 3.655 1.34.1 2.7-.66 3.5-1.645z" />
+                      </svg>
+                      <span>Sign in with Apple</span>
                     </button>
 
-                    <div className="text-xs text-neutral-500 mt-6">
+                    <button
+                      onClick={() => alert("Log in with Facebook")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-[#1877F2] hover:bg-[#1877F2]/90 text-white text-sm font-semibold rounded-lg shadow-xs transition-colors cursor-pointer"
+                    >
+                      <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                      </svg>
+                      <span>Log in with Facebook</span>
+                    </button>
+
+                    <button
+                      onClick={() => alert("Sign in with Google")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-white hover:bg-neutral-50 text-neutral-700 text-sm font-semibold rounded-lg border border-neutral-300 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
+                        <path fill="#EA4335" d="M12 5.04c1.67 0 3.17.58 4.35 1.71l3.25-3.25C17.65 1.58 14.98 1 12 1 7.35 1 3.37 3.67 1.39 7.56l3.85 2.99c.9-2.7 3.4-4.5 6.76-4.5z" />
+                        <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.44c-.28 1.48-1.11 2.73-2.36 3.58l3.66 2.84c2.14-1.98 3.75-4.88 3.75-8.57z" />
+                        <path fill="#FBBC05" d="M5.24 10.55c-.23-.7-.36-1.45-.36-2.22s.13-1.52.36-2.22L1.39 3.12C.5 4.9.01 6.89.01 9c0 2.11.49 4.1 1.38 5.88l3.85-3.33z" />
+                        <path fill="#34A853" d="M12 17.5c-3.36 0-5.86-1.8-6.76-4.5L1.39 15.99c1.98 3.89 5.96 6.56 10.61 6.56 3 0 5.83-1.04 8.01-2.83l-3.66-2.84c-1.18.79-2.69 1.28-4.36 1.28z" />
+                      </svg>
+                      <span>Sign in with Google</span>
+                    </button>
+
+                    <button
+                      onClick={() => setAuthMethod("email")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-sm font-semibold rounded-lg border border-neutral-200/60 transition-colors cursor-pointer"
+                    >
+                      <Mail className="h-5 w-5 text-neutral-600 shrink-0" />
+                      <span>Log in with email and password</span>
+                    </button>
+
+                    <div className="text-xs text-neutral-500 mt-4">
                       Don't have an account?{" "}
                       <span onClick={() => { setAuthMode("register"); setAuthMethod("list"); }} className="text-brand-red hover:text-brand-red/90 cursor-pointer hover:underline font-bold">
                         Register
@@ -211,23 +239,51 @@ const Header: React.FC = () => {
               ) : (
                 authMethod === "list" ? (
                   /* View 3: Register List Options */
-                  <div className="flex flex-col items-center gap-4 text-center select-none">
-                    <h2 className="text-xl font-bold text-brand-dark mb-2">Create your account</h2>
+                  <div className="flex flex-col items-center gap-3 w-full text-center select-none">
+                    <h2 className="text-2xl font-bold text-brand-dark mb-3">Create your account</h2>
                     
-                    <button onClick={() => alert("Sign up with Apple")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Sign up with Apple
-                    </button>
-                    <button onClick={() => alert("Sign up with Facebook")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Sign up with Facebook
-                    </button>
-                    <button onClick={() => alert("Sign up with Google")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Sign up with Google
-                    </button>
-                    <button onClick={() => setAuthMethod("email")} className="w-full text-center py-2 text-sm font-semibold text-neutral-600 hover:text-brand-red hover:underline transition-all cursor-pointer">
-                      Register with email and password
+                    <button
+                      onClick={() => alert("Sign up with Apple")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-black hover:bg-neutral-900 text-white text-sm font-semibold rounded-lg shadow-xs transition-colors cursor-pointer"
+                    >
+                      <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.54 9.103 1.51 12.06 1.005 1.45 2.187 3.068 3.757 3.007 1.516-.06 2.09-.98 3.92-.98 1.82 0 2.347.98 3.93.95 1.618-.03 2.654-1.47 3.652-2.922 1.153-1.688 1.63-3.32 1.66-3.41-.03-.01-3.178-1.22-3.21-4.82-.03-3.02 2.47-4.47 2.58-4.54-1.42-2.08-3.6-2.31-4.38-2.36-2.062-.167-3.24 1.078-4.09 1.078zM16.14 3.75c.828-1.006 1.386-2.41 1.233-3.812-1.2.05-2.656.8-3.518 1.802-.74.85-1.39 2.27-1.216 3.655 1.34.1 2.7-.66 3.5-1.645z" />
+                      </svg>
+                      <span>Sign up with Apple</span>
                     </button>
 
-                    <div className="text-xs text-neutral-500 mt-6">
+                    <button
+                      onClick={() => alert("Sign up with Facebook")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-[#1877F2] hover:bg-[#1877F2]/90 text-white text-sm font-semibold rounded-lg shadow-xs transition-colors cursor-pointer"
+                    >
+                      <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                      </svg>
+                      <span>Sign up with Facebook</span>
+                    </button>
+
+                    <button
+                      onClick={() => alert("Sign up with Google")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-white hover:bg-neutral-50 text-neutral-700 text-sm font-semibold rounded-lg border border-neutral-300 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
+                        <path fill="#EA4335" d="M12 5.04c1.67 0 3.17.58 4.35 1.71l3.25-3.25C17.65 1.58 14.98 1 12 1 7.35 1 3.37 3.67 1.39 7.56l3.85 2.99c.9-2.7 3.4-4.5 6.76-4.5z" />
+                        <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.44c-.28 1.48-1.11 2.73-2.36 3.58l3.66 2.84c2.14-1.98 3.75-4.88 3.75-8.57z" />
+                        <path fill="#FBBC05" d="M5.24 10.55c-.23-.7-.36-1.45-.36-2.22s.13-1.52.36-2.22L1.39 3.12C.5 4.9.01 6.89.01 9c0 2.11.49 4.1 1.38 5.88l3.85-3.33z" />
+                        <path fill="#34A853" d="M12 17.5c-3.36 0-5.86-1.8-6.76-4.5L1.39 15.99c1.98 3.89 5.96 6.56 10.61 6.56 3 0 5.83-1.04 8.01-2.83l-3.66-2.84c-1.18.79-2.69 1.28-4.36 1.28z" />
+                      </svg>
+                      <span>Sign up with Google</span>
+                    </button>
+
+                    <button
+                      onClick={() => setAuthMethod("email")}
+                      className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-sm font-semibold rounded-lg border border-neutral-200/60 transition-colors cursor-pointer"
+                    >
+                      <Mail className="h-5 w-5 text-neutral-600 shrink-0" />
+                      <span>Register with email and password</span>
+                    </button>
+
+                    <div className="text-xs text-neutral-500 mt-4">
                       Already have an account?{" "}
                       <span onClick={() => { setAuthMode("signin"); setAuthMethod("list"); }} className="text-brand-red hover:text-brand-red/90 cursor-pointer hover:underline font-bold">
                         Sign in

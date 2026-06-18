@@ -28,7 +28,7 @@ const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerp
           className="object-cover opacity-85 transition-transform duration-700 ease-out group-hover:scale-[1.03] group-hover:opacity-75"
         />
         {/* Dark linear gradient overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent z-10" />
       </div>
 
       {/* Top Overlaid Badge */}

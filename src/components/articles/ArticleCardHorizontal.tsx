@@ -32,7 +32,7 @@ const ArticleCardHorizontal: React.FC<ArticleCardHorizontalProps> = ({ article }
       </div>
 
       {/* Right Content */}
-      <div className="flex flex-col justify-between py-1 flex-grow">
+      <div className="flex flex-col justify-between py-1 grow">
         <div className="flex flex-col gap-1.5">
           {/* Category overlay for Desktop */}
           <div className="hidden sm:block">

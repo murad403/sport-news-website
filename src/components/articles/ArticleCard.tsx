@@ -29,7 +29,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
       </div>
 
       {/* Info Content */}
-      <div className="flex flex-col flex-grow p-4">
+      <div className="flex flex-col grow p-4">
         {/* Meta Info */}
         <div className="flex items-center gap-3 text-[10px] md:text-xs text-neutral-500 font-semibold mb-2">
           <span className="flex items-center gap-1">
