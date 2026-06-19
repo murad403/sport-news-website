@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useRef, useEffect } from "react"
 import { getLocalMatchResults } from "@/lib/localizer"
 import ScoreWidget from "@/components/scores/ScoreWidget"
 import Button from "@/components/ui/Button"
-import { Filter, Award } from "lucide-react"
+import { Filter, Award, ChevronLeft, ChevronRight } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 
 export default function SoccerResultsPage() {
@@ -14,6 +14,11 @@ export default function SoccerResultsPage() {
   const [activeDateTab, setActiveDateTab] = useState<"today" | "yesterday" | "week">("today")
   const [selectedLeague, setSelectedLeague] = useState("All Leagues")
   const [visibleCount, setVisibleCount] = useState(6)
+
+  // References and state for horizontal scrolling
+  const filterContainerRef = useRef<HTMLDivElement>(null)
+  const [showLeftArrow, setShowLeftArrow] = useState(false)
+  const [showRightArrow, setShowRightArrow] = useState(false)
 
   // Memoized localized match results
   const matchesData = useMemo(() => getLocalMatchResults(lang), [lang])
@@ -30,6 +35,43 @@ export default function SoccerResultsPage() {
     { value: "Nations League", label: "Nations League" },
     { value: "Amichevole Internazionale", label: "Amichevole Internazionale" }
   ], [isIt])
+
+  // Check scroll position to show/hide arrows
+  const checkScroll = () => {
+    const container = filterContainerRef.current
+    if (container) {
+      const { scrollLeft, scrollWidth, clientWidth } = container
+      setShowLeftArrow(scrollLeft > 5)
+      setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 5)
+    }
+  }
+
+  useEffect(() => {
+    const container = filterContainerRef.current
+    if (container) {
+      checkScroll()
+      container.addEventListener("scroll", checkScroll)
+      window.addEventListener("resize", checkScroll)
+      
+      const timer = setTimeout(checkScroll, 100)
+      return () => {
+        container.removeEventListener("scroll", checkScroll)
+        window.removeEventListener("resize", checkScroll)
+        clearTimeout(timer)
+      }
+    }
+  }, [leagues])
+
+  const scrollContainer = (direction: "left" | "right") => {
+    const container = filterContainerRef.current
+    if (container) {
+      const scrollAmount = 200
+      container.scrollTo({
+        left: container.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount),
+        behavior: "smooth"
+      })
+    }
+  }
 
   // Filter match results based on tabs and selected league
   const filteredMatches = useMemo(() => {
@@ -132,26 +174,53 @@ export default function SoccerResultsPage() {
       </div>
 
       {/* League Filters */}
-      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 border-b border-neutral-200">
-        <span className="text-neutral-400 shrink-0">
-          <Filter className="h-4 w-4" />
-        </span>
-        {leagues.map((league) => (
-          <button
-            key={league.value}
-            onClick={() => {
-              setSelectedLeague(league.value)
-              setVisibleCount(6)
-            }}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase whitespace-nowrap transition-colors cursor-pointer border ${
-              selectedLeague === league.value
-                ? "bg-brand-red text-white border-brand-red"
-                : "bg-white text-neutral-600 border-neutral-250 hover:bg-neutral-50"
-            }`}
-          >
-            {league.label}
-          </button>
-        ))}
+      <div className="relative w-full flex items-center">
+        {showLeftArrow && (
+          <div className="absolute left-0 top-0 bottom-2 flex items-center bg-gradient-to-r from-[#f5f5f5] via-[#f5f5f5] to-transparent pr-8 z-10">
+            <button
+              onClick={() => scrollContainer("left")}
+              className="p-1.5 bg-white border border-neutral-200 rounded-full shadow-md hover:bg-neutral-50 cursor-pointer text-brand-dark transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          </div>
+        )}
+        
+        <div 
+          ref={filterContainerRef}
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar md:custom-scrollbar pb-2 border-b border-neutral-200 w-full flex-nowrap scroll-smooth"
+        >
+          <span className="text-neutral-400 shrink-0">
+            <Filter className="h-4 w-4" />
+          </span>
+          {leagues.map((league) => (
+            <button
+              key={league.value}
+              onClick={() => {
+                setSelectedLeague(league.value)
+                setVisibleCount(6)
+              }}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase whitespace-nowrap shrink-0 transition-colors cursor-pointer border ${
+                selectedLeague === league.value
+                  ? "bg-brand-red text-white border-brand-red"
+                  : "bg-white text-neutral-600 border-neutral-250 hover:bg-neutral-50"
+              }`}
+            >
+              {league.label}
+            </button>
+          ))}
+        </div>
+
+        {showRightArrow && (
+          <div className="absolute right-0 top-0 bottom-2 flex items-center bg-gradient-to-l from-[#f5f5f5] via-[#f5f5f5] to-transparent pl-8 z-10">
+            <button
+              onClick={() => scrollContainer("right")}
+              className="p-1.5 bg-white border border-neutral-200 rounded-full shadow-md hover:bg-neutral-50 cursor-pointer text-brand-dark transition-colors"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Grouped Match Results List */}

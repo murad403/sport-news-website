@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useRef, useEffect } from "react"
 import { getLocalArticles, getLocalMatchResults } from "@/lib/localizer"
 import ArticleCardHorizontal from "@/components/articles/ArticleCardHorizontal"
 import Sidebar from "@/components/layout/Sidebar"
-import { Calendar, Filter, Newspaper, Trophy } from "lucide-react"
+import { Calendar, Filter, Newspaper, Trophy, ChevronLeft, ChevronRight } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 
 export default function MatchNewsPage() {
@@ -12,6 +12,11 @@ export default function MatchNewsPage() {
   const isIt = lang === "it"
 
   const [selectedSport, setSelectedSport] = useState("All Sports")
+
+  // References and state for horizontal scrolling
+  const filterContainerRef = useRef<HTMLDivElement>(null)
+  const [showLeftArrow, setShowLeftArrow] = useState(false)
+  const [showRightArrow, setShowRightArrow] = useState(false)
 
   // Sport filters mapped dynamically
   const sportFilters = useMemo(() => [
@@ -21,6 +26,43 @@ export default function MatchNewsPage() {
     { value: "Tennis", label: t.navigation.tennis },
     { value: "Basketball", label: t.navigation.basketball }
   ], [isIt, t])
+
+  // Check scroll position to show/hide arrows
+  const checkScroll = () => {
+    const container = filterContainerRef.current
+    if (container) {
+      const { scrollLeft, scrollWidth, clientWidth } = container
+      setShowLeftArrow(scrollLeft > 5)
+      setShowRightArrow(scrollLeft + clientWidth < scrollWidth - 5)
+    }
+  }
+
+  useEffect(() => {
+    const container = filterContainerRef.current
+    if (container) {
+      checkScroll()
+      container.addEventListener("scroll", checkScroll)
+      window.addEventListener("resize", checkScroll)
+      
+      const timer = setTimeout(checkScroll, 100)
+      return () => {
+        container.removeEventListener("scroll", checkScroll)
+        window.removeEventListener("resize", checkScroll)
+        clearTimeout(timer)
+      }
+    }
+  }, [sportFilters])
+
+  const scrollContainer = (direction: "left" | "right") => {
+    const container = filterContainerRef.current
+    if (container) {
+      const scrollAmount = 200
+      container.scrollTo({
+        left: container.scrollLeft + (direction === "left" ? -scrollAmount : scrollAmount),
+        behavior: "smooth"
+      })
+    }
+  }
 
   // Filter articles for news list
   const filteredArticles = useMemo(() => {
@@ -70,23 +112,50 @@ export default function MatchNewsPage() {
         <div className="lg:col-span-7 flex flex-col gap-6">
           
           {/* Sport Filters */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 border-b border-neutral-200">
-            <span className="text-neutral-450 shrink-0">
-              <Filter className="h-4 w-4" />
-            </span>
-            {sportFilters.map((sport) => (
-              <button
-                key={sport.value}
-                onClick={() => setSelectedSport(sport.value)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase transition-colors cursor-pointer border ${
-                  selectedSport === sport.value
-                    ? "bg-brand-red text-white border-brand-red"
-                    : "bg-white text-neutral-600 border-neutral-250 hover:bg-neutral-50"
-                }`}
-              >
-                {sport.label}
-              </button>
-            ))}
+          <div className="relative w-full flex items-center">
+            {showLeftArrow && (
+              <div className="absolute left-0 top-0 bottom-2 flex items-center bg-gradient-to-r from-[#f5f5f5] via-[#f5f5f5] to-transparent pr-8 z-10">
+                <button
+                  onClick={() => scrollContainer("left")}
+                  className="p-1.5 bg-white border border-neutral-200 rounded-full shadow-md hover:bg-neutral-50 cursor-pointer text-brand-dark transition-colors"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+            
+            <div 
+              ref={filterContainerRef}
+              className="flex items-center gap-2 overflow-x-auto no-scrollbar md:custom-scrollbar pb-2 border-b border-neutral-200 w-full flex-nowrap scroll-smooth"
+            >
+              <span className="text-neutral-450 shrink-0">
+                <Filter className="h-4 w-4" />
+              </span>
+              {sportFilters.map((sport) => (
+                <button
+                  key={sport.value}
+                  onClick={() => setSelectedSport(sport.value)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase whitespace-nowrap shrink-0 transition-colors cursor-pointer border ${
+                    selectedSport === sport.value
+                      ? "bg-brand-red text-white border-brand-red"
+                      : "bg-white text-neutral-600 border-neutral-250 hover:bg-neutral-50"
+                  }`}
+                >
+                  {sport.label}
+                </button>
+              ))}
+            </div>
+
+            {showRightArrow && (
+              <div className="absolute right-0 top-0 bottom-2 flex items-center bg-gradient-to-l from-[#f5f5f5] via-[#f5f5f5] to-transparent pl-8 z-10">
+                <button
+                  onClick={() => scrollContainer("right")}
+                  className="p-1.5 bg-white border border-neutral-200 rounded-full shadow-md hover:bg-neutral-50 cursor-pointer text-brand-dark transition-colors"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Articles List */}

@@ -52,7 +52,7 @@ const Navigation: React.FC = () => {
                 key={item.label}
                 href={item.href}
                 className={cn(
-                  "relative flex items-center h-full px-2 md:px-2.5 lg:px-3 py-2 md:py-0 text-[11px] md:text-xs lg:text-[13px] font-bold uppercase tracking-wider whitespace-nowrap transition-colors hover:text-brand-red cursor-pointer",
+                  "relative flex items-center h-full px-2 md:px-2.5 lg:px-3 py-2 md:py-0 text-[11px] md:text-xs lg:text-[13px] font-bold uppercase tracking-wider whitespace-nowrap shrink-0 transition-colors hover:text-brand-red cursor-pointer",
                   isActive
                     ? "text-brand-red font-extrabold border-b-2 border-brand-red md:h-12"
                     : "text-brand-dark"
