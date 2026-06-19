@@ -111,7 +111,7 @@ export default async function AboutPage({
           {timeline.map((mile) => (
             <div key={mile.year} className="relative flex flex-col gap-1">
               {/* Timeline dot */}
-              <div className="absolute -left-[23px] top-1 h-3 w-3 bg-brand-red border-2 border-white rounded-full shadow-sm" />
+              <div className="absolute left-[-23px] top-1 h-3 w-3 bg-brand-red border-2 border-white rounded-full shadow-sm" />
               
               <div className="flex items-center gap-2">
                 <span className="text-sm font-extrabold text-brand-red font-headline bg-brand-red/5 px-2 py-0.5 rounded">

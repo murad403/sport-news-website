@@ -33,7 +33,7 @@ export default function StatisticsPage() {
       <Tabs defaultValue="tables" className="w-full">
         
         {/* Tabs Triggers List */}
-        <TabsList className="w-full max-w-md grid grid-cols-3 mb-6 bg-neutral-100 p-1 rounded-xl border border-neutral-200">
+        <TabsList className="w-full max-w-lg grid grid-cols-3 mb-6 bg-neutral-100 p-1 rounded-xl border border-neutral-200">
           <TabsTrigger value="tables" className="font-bold uppercase text-xs md:text-sm">
             {isIt ? "Classifiche" : "League Tables"}
           </TabsTrigger>
