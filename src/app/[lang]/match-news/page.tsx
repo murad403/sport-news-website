@@ -114,7 +114,7 @@ export default function MatchNewsPage() {
           {/* Sport Filters */}
           <div className="relative w-full flex items-center">
             {showLeftArrow && (
-              <div className="absolute left-0 top-0 bottom-2 flex items-center bg-gradient-to-r from-[#f5f5f5] via-[#f5f5f5] to-transparent pr-8 z-10">
+              <div className="absolute left-0 top-0 bottom-2 flex items-center bg-linear-to-r from-[#f5f5f5] via-[#f5f5f5] to-transparent pr-8 z-10">
                 <button
                   onClick={() => scrollContainer("left")}
                   className="p-1.5 bg-white border border-neutral-200 rounded-full shadow-md hover:bg-neutral-50 cursor-pointer text-brand-dark transition-colors"
@@ -147,7 +147,7 @@ export default function MatchNewsPage() {
             </div>
 
             {showRightArrow && (
-              <div className="absolute right-0 top-0 bottom-2 flex items-center bg-gradient-to-l from-[#f5f5f5] via-[#f5f5f5] to-transparent pl-8 z-10">
+              <div className="absolute right-0 top-0 bottom-2 flex items-center bg-linear-to-l from-[#f5f5f5] via-[#f5f5f5] to-transparent pl-8 z-10">
                 <button
                   onClick={() => scrollContainer("right")}
                   className="p-1.5 bg-white border border-neutral-200 rounded-full shadow-md hover:bg-neutral-50 cursor-pointer text-brand-dark transition-colors"
