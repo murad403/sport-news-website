@@ -1,3 +1,4 @@
+"use client"
 import React from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -5,6 +6,7 @@ import { Article } from "@/lib/types"
 import CategoryBadge from "../ui/CategoryBadge"
 import { Clock, User } from "lucide-react"
 import { formatShortDate } from "@/lib/utils"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface ArticleCardLargeProps {
   article: Article
@@ -12,9 +14,11 @@ export interface ArticleCardLargeProps {
 }
 
 const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerpt = true }) => {
+  const { lang } = useTranslation()
+
   return (
     <Link
-      href={`/article/${article.slug}`}
+      href={`/${lang}/article/${article.slug}`}
       className="group relative flex flex-col justify-end w-full h-[320px] md:h-[480px] rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow bg-brand-dark select-none"
     >
       {/* Background Image */}
@@ -49,7 +53,7 @@ const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerp
             {formatShortDate(article.publishedAt)}
           </span>
           <span className="bg-white/10 px-2 py-0.5 rounded text-[10px]">
-            {article.readingTime} min read
+            {lang === "it" ? `${article.readingTime} min lettura` : `${article.readingTime} min read`}
           </span>
         </div>
 

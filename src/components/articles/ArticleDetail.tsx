@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
@@ -5,20 +7,24 @@ import { Article } from "@/lib/types"
 import CategoryBadge from "../ui/CategoryBadge"
 import { Clock, User, Share2, Link2, BookOpen } from "lucide-react"
 import { formatDate } from "@/lib/utils"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface ArticleDetailProps {
   article: Article
 }
 
 const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
+  const { t, lang } = useTranslation()
+  const isIt = lang === "it"
+
   return (
     <article className="w-full bg-white border border-neutral-200 rounded-xl overflow-hidden p-6 md:p-8 shadow-sm select-none">
       
       {/* 1. Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-xs text-neutral-500 font-semibold mb-4">
-        <Link href="/" className="hover:text-brand-red">Home</Link>
+        <Link href={`/${lang}`} className="hover:text-brand-red">Home</Link>
         <span>/</span>
-        <Link href={`/categories/${article.category}`} className="hover:text-brand-red uppercase">{article.category}</Link>
+        <Link href={`/${lang}/categories/${article.category}`} className="hover:text-brand-red uppercase">{article.category}</Link>
         <span>/</span>
         <span className="truncate max-w-[200px] sm:max-w-md font-medium text-neutral-400">{article.title}</span>
       </nav>
@@ -29,7 +35,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
           <CategoryBadge category={article.category} className="px-3 py-1 text-xs md:text-sm font-extrabold" />
           <span className="flex items-center gap-1 text-xs text-neutral-400 font-medium">
             <BookOpen className="h-4 w-4" />
-            {article.readingTime} MIN READ
+            {article.readingTime} {isIt ? "MINUTI DI LETTURA" : "MIN READ"}
           </span>
         </div>
 
@@ -58,7 +64,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
         {/* Share buttons */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold uppercase text-neutral-400 flex items-center gap-1">
-            <Share2 className="h-3.5 w-3.5" /> Share:
+            <Share2 className="h-3.5 w-3.5" /> {isIt ? "Condividi:" : "Share:"}
           </span>
           <button className="h-8 w-8 rounded-full border border-neutral-200 hover:bg-neutral-50 hover:text-brand-red flex items-center justify-center transition-colors cursor-pointer" title="Facebook">
             <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
@@ -73,7 +79,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
           <button
             onClick={() => {
               navigator.clipboard.writeText(window.location.href)
-              alert("Link copied to clipboard!")
+              alert(isIt ? "Link copiato negli appunti!" : "Link copied to clipboard!")
             }}
             className="h-8 w-8 rounded-full border border-neutral-200 hover:bg-neutral-50 hover:text-brand-red flex items-center justify-center transition-colors cursor-pointer"
             title="Copy Link"
@@ -105,10 +111,10 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                 <p>{paragraph}</p>
                 <div className="my-8 bg-neutral-50 border border-neutral-200 rounded-xl p-4 flex flex-col items-center justify-center text-center h-[160px] select-none">
                   <span className="text-[10px] uppercase font-bold text-neutral-400 tracking-wider mb-2">
-                    Advertisement
+                    {isIt ? "Spazio Pubblicitario" : "Advertisement"}
                   </span>
                   <div className="w-[468px] max-w-full h-[60px] bg-neutral-200 border border-neutral-300 rounded flex items-center justify-center text-xs font-semibold text-neutral-500">
-                    468 x 60 Content Banner Place
+                    {isIt ? "Banner Pubblicitario 468 x 60" : "468 x 60 Content Banner Place"}
                   </div>
                 </div>
               </React.Fragment>
@@ -135,7 +141,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
           {article.tags.map((tag) => (
             <Link
               key={tag}
-              href={`/categories/Football`}
+              href={`/${lang}/categories/${article.category}`}
               className="text-xs font-semibold px-2.5 py-1 bg-neutral-100 hover:bg-brand-red hover:text-white text-neutral-700 rounded transition-colors"
             >
               #{tag}

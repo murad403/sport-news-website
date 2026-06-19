@@ -3,12 +3,15 @@
 import React, { useState } from "react"
 import Input from "../ui/Input"
 import { Search, ShieldAlert, Award, Star, TrendingUp } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 interface PlayerProfile {
   name: string
   club: string
-  position: string
-  nationality: string
+  positionIt: string
+  positionEn: string
+  nationalityIt: string
+  nationalityEn: string
   goals: number
   assists: number
   matches: number
@@ -22,8 +25,10 @@ const mockPlayerProfiles: PlayerProfile[] = [
   {
     name: "Erling Haaland",
     club: "Manchester City",
-    position: "Forward (ST)",
-    nationality: "Norway",
+    positionIt: "Attaccante (ATT)",
+    positionEn: "Forward (ST)",
+    nationalityIt: "Norvegia",
+    nationalityEn: "Norway",
     goals: 27,
     assists: 5,
     matches: 31,
@@ -35,8 +40,10 @@ const mockPlayerProfiles: PlayerProfile[] = [
   {
     name: "Kylian Mbappé",
     club: "Real Madrid",
-    position: "Forward (LW/ST)",
-    nationality: "France",
+    positionIt: "Attaccante (AS/ATT)",
+    positionEn: "Forward (LW/ST)",
+    nationalityIt: "Francia",
+    nationalityEn: "France",
     goals: 27,
     assists: 7,
     matches: 29,
@@ -48,8 +55,10 @@ const mockPlayerProfiles: PlayerProfile[] = [
   {
     name: "Cole Palmer",
     club: "Chelsea",
-    position: "Midfielder (CAM/RW)",
-    nationality: "England",
+    positionIt: "Centrocampista (COC/AD)",
+    positionEn: "Midfielder (CAM/RW)",
+    nationalityIt: "Inghilterra",
+    nationalityEn: "England",
     goals: 22,
     assists: 11,
     matches: 34,
@@ -61,8 +70,10 @@ const mockPlayerProfiles: PlayerProfile[] = [
   {
     name: "Jude Bellingham",
     club: "Real Madrid",
-    position: "Midfielder (CAM)",
-    nationality: "England",
+    positionIt: "Centrocampista (COC)",
+    positionEn: "Midfielder (CAM)",
+    nationalityIt: "Inghilterra",
+    nationalityEn: "England",
     goals: 19,
     assists: 6,
     matches: 28,
@@ -74,8 +85,10 @@ const mockPlayerProfiles: PlayerProfile[] = [
   {
     name: "Phil Foden",
     club: "Manchester City",
-    position: "Midfielder (RW/CAM)",
-    nationality: "England",
+    positionIt: "Centrocampista (AD/COC)",
+    positionEn: "Midfielder (RW/CAM)",
+    nationalityIt: "Inghilterra",
+    nationalityEn: "England",
     goals: 19,
     assists: 8,
     matches: 35,
@@ -87,6 +100,8 @@ const mockPlayerProfiles: PlayerProfile[] = [
 ]
 
 const PlayerStatsTable: React.FC = () => {
+  const { t, lang } = useTranslation()
+  const isIt = lang === "it"
   const [searchTerm, setSearchTerm] = useState("")
 
   const filteredPlayers = mockPlayerProfiles.filter((player) =>
@@ -99,7 +114,7 @@ const PlayerStatsTable: React.FC = () => {
       <div className="relative w-full max-w-md">
         <Input
           type="text"
-          placeholder="Search by player name (e.g. Haaland, Palmer)..."
+          placeholder={isIt ? "Cerca per nome (es. Haaland, Palmer)..." : "Search by player name (e.g. Haaland, Palmer)..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 h-11 text-base rounded-lg border-neutral-300 focus-visible:ring-brand-red"
@@ -122,27 +137,27 @@ const PlayerStatsTable: React.FC = () => {
                     {player.name}
                   </h3>
                   <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">
-                    {player.position}
+                    {isIt ? player.positionIt : player.positionEn}
                   </span>
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-bold text-brand-red uppercase">{player.club}</div>
-                  <div className="text-xs text-neutral-400 font-semibold">{player.nationality}</div>
+                  <div className="text-xs text-neutral-400 font-semibold">{isIt ? player.nationalityIt : player.nationalityEn}</div>
                 </div>
               </div>
 
               {/* Stats Body */}
               <div className="p-5 grow grid grid-cols-3 gap-4 border-b border-neutral-100 bg-neutral-50/50">
                 <div className="flex flex-col items-center justify-center p-3 bg-white border border-neutral-150 rounded-lg text-center shadow-xs">
-                  <span className="text-xs font-extrabold text-neutral-400 uppercase mb-1">Matches</span>
+                  <span className="text-xs font-extrabold text-neutral-400 uppercase mb-1">{isIt ? "Partite" : "Matches"}</span>
                   <span className="text-xl font-bold font-headline text-brand-dark">{player.matches}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-3 bg-white border border-neutral-150 rounded-lg text-center shadow-xs">
-                  <span className="text-xs font-extrabold text-neutral-400 uppercase mb-1">Goals</span>
+                  <span className="text-xs font-extrabold text-neutral-400 uppercase mb-1">{isIt ? "Gol" : "Goals"}</span>
                   <span className="text-xl font-bold font-headline text-brand-red">{player.goals}</span>
                 </div>
                 <div className="flex flex-col items-center justify-center p-3 bg-white border border-neutral-150 rounded-lg text-center shadow-xs">
-                  <span className="text-xs font-extrabold text-neutral-400 uppercase mb-1">Assists</span>
+                  <span className="text-xs font-extrabold text-neutral-400 uppercase mb-1">Assist</span>
                   <span className="text-xl font-bold font-headline text-brand-dark">{player.assists}</span>
                 </div>
               </div>
@@ -151,19 +166,19 @@ const PlayerStatsTable: React.FC = () => {
               <div className="p-5 grid grid-cols-2 gap-4 text-xs font-semibold text-neutral-600">
                 <div className="flex items-center gap-2">
                   <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-                  <span>Rating: <strong className="text-brand-dark">{player.rating}</strong></span>
+                  <span>{isIt ? "Valutazione:" : "Rating:"} <strong className="text-brand-dark">{player.rating}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
                   <TrendingUp className="h-4 w-4 text-brand-red" />
-                  <span>Pass Accuracy: <strong className="text-brand-dark">{player.passAccuracy}</strong></span>
+                  <span>{isIt ? "Prec. Passaggi:" : "Pass Accuracy:"} <strong className="text-brand-dark">{player.passAccuracy}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Award className="h-4 w-4 text-neutral-400" />
-                  <span>Yellow Cards: <strong className="text-yellow-600">{player.yellowCards}</strong></span>
+                  <span>{isIt ? "Ammortimenti:" : "Yellow Cards:"} <strong className="text-yellow-600">{player.yellowCards}</strong></span>
                 </div>
                 <div className="flex items-center gap-2">
                   <ShieldAlert className="h-4 w-4 text-red-500" />
-                  <span>Red Cards: <strong className="text-red-600">{player.redCards}</strong></span>
+                  <span>{isIt ? "Espulsioni:" : "Red Cards:"} <strong className="text-red-600">{player.redCards}</strong></span>
                 </div>
               </div>
             </div>
@@ -171,7 +186,7 @@ const PlayerStatsTable: React.FC = () => {
         </div>
       ) : (
         <div className="bg-white border border-neutral-200 rounded-xl p-8 text-center text-neutral-500">
-          No players found matching "{searchTerm}"
+          {isIt ? `Nessun giocatore trovato corrispondente a "${searchTerm}"` : `No players found matching "${searchTerm}"`}
         </div>
       )}
     </div>

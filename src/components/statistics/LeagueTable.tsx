@@ -1,12 +1,15 @@
 import React from "react"
 import { mockLeagueTables } from "@/lib/mockData"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface LeagueTableProps {
   league: string
 }
 
 const LeagueTable: React.FC<LeagueTableProps> = ({ league }) => {
+  const { t, lang } = useTranslation()
+  const isIt = lang === "it"
   const standings = mockLeagueTables[league] || []
 
   // Helper to determine the border highlight based on position
@@ -30,9 +33,11 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ league }) => {
       {/* Table Title */}
       <div className="bg-brand-dark text-white px-5 py-4 flex items-center justify-between">
         <h3 className="font-headline text-xl font-bold uppercase tracking-wider">
-          {league} Standings
+          {isIt ? `Classifica ${league}` : `${league} Standings`}
         </h3>
-        <span className="text-xs font-bold text-neutral-400">Season 2025/2026</span>
+        <span className="text-xs font-bold text-neutral-400">
+          {isIt ? "Stagione 2025/2026" : "Season 2025/2026"}
+        </span>
       </div>
 
       {/* Table Grid */}
@@ -40,16 +45,16 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ league }) => {
         <table className="w-full text-sm text-left border-collapse">
           <thead>
             <tr className="bg-neutral-50 text-neutral-500 font-bold border-b border-neutral-200 text-xs md:text-sm select-none">
-              <th className="px-4 py-3 text-center w-12">Pos</th>
-              <th className="px-4 py-3">Club</th>
-              <th className="px-3 py-3 text-center">P</th>
-              <th className="px-3 py-3 text-center">W</th>
-              <th className="px-3 py-3 text-center">D</th>
-              <th className="px-3 py-3 text-center">L</th>
+              <th className="px-4 py-3 text-center w-12">{t.statistics.tableHeaders.pos}</th>
+              <th className="px-4 py-3">{t.statistics.tableHeaders.club}</th>
+              <th className="px-3 py-3 text-center">{t.statistics.tableHeaders.p}</th>
+              <th className="px-3 py-3 text-center">{t.statistics.tableHeaders.w}</th>
+              <th className="px-3 py-3 text-center">{t.statistics.tableHeaders.d}</th>
+              <th className="px-3 py-3 text-center">{t.statistics.tableHeaders.l}</th>
               <th className="px-3 py-3 text-center hidden md:table-cell">GF</th>
               <th className="px-3 py-3 text-center hidden md:table-cell">GA</th>
-              <th className="px-3 py-3 text-center hidden md:table-cell">GD</th>
-              <th className="px-4 py-3 text-center font-bold text-brand-dark">Pts</th>
+              <th className="px-3 py-3 text-center hidden md:table-cell">{t.statistics.tableHeaders.gd}</th>
+              <th className="px-4 py-3 text-center font-bold text-brand-dark">{t.statistics.tableHeaders.pts}</th>
             </tr>
           </thead>
           <tbody>
@@ -98,15 +103,15 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ league }) => {
       <div className="bg-neutral-50 border-t border-neutral-200 px-5 py-3.5 flex flex-wrap gap-4 text-[10px] md:text-xs font-semibold text-neutral-500 select-none">
         <div className="flex items-center gap-1.5">
           <span className="h-3.5 w-3.5 rounded bg-green-600 border border-green-700" />
-          <span>Champions League Group Stage</span>
+          <span>{t.statistics.legend.cl}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="h-3.5 w-3.5 rounded bg-orange-600 border border-orange-700" />
-          <span>Europa League Group Stage</span>
+          <span>{t.statistics.legend.el}</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="h-3.5 w-3.5 rounded bg-red-600 border border-red-700" />
-          <span>Relegation Zone</span>
+          <span>{t.statistics.legend.relegation}</span>
         </div>
       </div>
 

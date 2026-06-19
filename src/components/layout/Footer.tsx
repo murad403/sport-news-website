@@ -1,8 +1,13 @@
+"use client"
+
 import React from "react"
 import Link from "next/link"
 import { MessageSquare } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 const Footer: React.FC = () => {
+  const { t, lang } = useTranslation()
+
   return (
     <footer className="bg-brand-dark text-white border-t-4 border-brand-red select-none">
       {/* Upper Content */}
@@ -10,13 +15,13 @@ const Footer: React.FC = () => {
         
         {/* Column 1: Brand Info */}
         <div className="flex flex-col gap-4">
-          <Link href="/" className="inline-block">
+          <Link href={`/${lang}`} className="inline-block">
             <span className="font-headline text-3xl font-extrabold tracking-tight text-brand-red uppercase">
               ⚽ SportsPulse
             </span>
           </Link>
           <p className="text-xs text-neutral-400 leading-relaxed">
-            SportsPulse is a leading professional sports news platform providing real-time scores, breaking news, transfer updates, and in-depth statistical match analysis across the globe.
+            {t.common.footerDesc}
           </p>
           <div className="flex items-center gap-3 mt-2">
             <a
@@ -75,44 +80,44 @@ const Footer: React.FC = () => {
         {/* Column 2: Sports Categories */}
         <div className="flex flex-col gap-3">
           <h4 className="font-headline text-lg font-bold uppercase tracking-wider text-neutral-200 border-b border-neutral-800 pb-2">
-            Sports
+            {t.common.sports}
           </h4>
           <div className="grid grid-cols-2 gap-2 text-xs text-neutral-400">
-            <Link href="/categories/Football" className="hover:text-brand-red transition-colors">Football</Link>
-            <Link href="/categories/Tennis" className="hover:text-brand-red transition-colors">Tennis</Link>
-            <Link href="/categories/Basketball" className="hover:text-brand-red transition-colors">Basketball</Link>
-            <Link href="/categories/F1" className="hover:text-brand-red transition-colors">Formula 1</Link>
-            <Link href="/categories/Cricket" className="hover:text-brand-red transition-colors">Cricket</Link>
-            <Link href="/categories/Golf" className="hover:text-brand-red transition-colors">Golf</Link>
-            <Link href="/categories/Rugby" className="hover:text-brand-red transition-colors">Rugby</Link>
+            <Link href={`/${lang}/categories/Football`} className="hover:text-brand-red transition-colors">{t.navigation.football}</Link>
+            <Link href={`/${lang}/categories/Tennis`} className="hover:text-brand-red transition-colors">{t.navigation.tennis}</Link>
+            <Link href={`/${lang}/categories/Basketball`} className="hover:text-brand-red transition-colors">{t.navigation.basketball}</Link>
+            <Link href={`/${lang}/categories/F1`} className="hover:text-brand-red transition-colors">{t.navigation.f1}</Link>
+            <Link href={`/${lang}/categories/Cricket`} className="hover:text-brand-red transition-colors">{t.navigation.football === "Calcio" ? "Cricket" : "Cricket"}</Link>
+            <Link href={`/${lang}/categories/Golf`} className="hover:text-brand-red transition-colors">Golf</Link>
+            <Link href={`/${lang}/categories/Rugby`} className="hover:text-brand-red transition-colors">Rugby</Link>
           </div>
         </div>
 
         {/* Column 3: Quick Links */}
         <div className="flex flex-col gap-3">
           <h4 className="font-headline text-lg font-bold uppercase tracking-wider text-neutral-200 border-b border-neutral-800 pb-2">
-            Quick Links
+            {t.common.quickLinks}
           </h4>
           <div className="grid grid-cols-2 gap-2 text-xs text-neutral-400">
-            <Link href="/" className="hover:text-brand-red transition-colors">Home</Link>
-            <Link href="/soccer-results" className="hover:text-brand-red transition-colors">Results</Link>
-            <Link href="/statistics" className="hover:text-brand-red transition-colors">Statistics</Link>
-            <Link href="/player-updates" className="hover:text-brand-red transition-colors">Players</Link>
-            <Link href="/sponsors" className="hover:text-brand-red transition-colors">Sponsors</Link>
-            <Link href="/about" className="hover:text-brand-red transition-colors">About Us</Link>
+            <Link href={`/${lang}`} className="hover:text-brand-red transition-colors">{t.navigation.home}</Link>
+            <Link href={`/${lang}/soccer-results`} className="hover:text-brand-red transition-colors">{t.navigation.soccerResults === "Risultati Calcio" ? "Risultati" : "Results"}</Link>
+            <Link href={`/${lang}/statistics`} className="hover:text-brand-red transition-colors">{t.navigation.statistics}</Link>
+            <Link href={`/${lang}/player-updates`} className="hover:text-brand-red transition-colors">{t.navigation.playerUpdates === "Aggiornamenti Giocatori" ? "Giocatori" : "Players"}</Link>
+            <Link href={`/${lang}/sponsors`} className="hover:text-brand-red transition-colors">{t.navigation.sponsors}</Link>
+            <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{t.navigation.aboutUs}</Link>
           </div>
         </div>
 
         {/* Column 4: Legal & Support */}
         <div className="flex flex-col gap-3">
           <h4 className="font-headline text-lg font-bold uppercase tracking-wider text-neutral-200 border-b border-neutral-800 pb-2">
-            Legal & Contact
+            {t.common.legalContact}
           </h4>
           <div className="flex flex-col gap-2 text-xs text-neutral-400">
-            <Link href="/about" className="hover:text-brand-red transition-colors">Privacy Policy</Link>
-            <Link href="/about" className="hover:text-brand-red transition-colors">Terms of Service</Link>
-            <Link href="/about" className="hover:text-brand-red transition-colors">Cookie Policy</Link>
-            <Link href="/contact" className="hover:text-brand-red transition-colors">Contact Us</Link>
+            <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Informativa sulla privacy" : "Privacy Policy"}</Link>
+            <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Termini di servizio" : "Terms of Service"}</Link>
+            <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Informativa sui cookie" : "Cookie Policy"}</Link>
+            <Link href={`/${lang}/contact`} className="hover:text-brand-red transition-colors">{t.navigation.contact}</Link>
           </div>
         </div>
 
@@ -122,11 +127,11 @@ const Footer: React.FC = () => {
       <div className="bg-black/40 py-4 text-center border-t border-neutral-900 text-[10px] text-neutral-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
-            © {new Date().getFullYear()} SportsPulse. All rights reserved. Replicated for demonstration purposes.
+            © {new Date().getFullYear()} SportsPulse. {t.common.allRightsReserved}
           </span>
           <div className="flex gap-4">
-            <span className="hover:underline cursor-pointer">Ad Choices</span>
-            <span className="hover:underline cursor-pointer">Manage Cookies</span>
+            <span className="hover:underline cursor-pointer">{lang === "it" ? "Scelte pubblicitarie" : "Ad Choices"}</span>
+            <span className="hover:underline cursor-pointer">{lang === "it" ? "Gestisci cookie" : "Manage Cookies"}</span>
           </div>
         </div>
       </div>

@@ -1,3 +1,4 @@
+"use client"
 import React from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -5,14 +6,17 @@ import { Article } from "@/lib/types"
 import CategoryBadge from "../ui/CategoryBadge"
 import { Clock, User } from "lucide-react"
 import { formatShortDate } from "@/lib/utils"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface ArticleCardProps {
   article: Article
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
+  const { lang } = useTranslation()
+
   return (
-    <Link href={`/article/${article.slug}`} className="group flex flex-col h-full bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow select-none">
+    <Link href={`/${lang}/article/${article.slug}`} className="group flex flex-col h-full bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow select-none">
       {/* Aspect Ratio Video Container for Image */}
       <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
         <Image
@@ -49,7 +53,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
 
         {/* Excerpt if present */}
         {article.excerpt && (
-          <p className="text-xs md:text-sm text-neutral-600 line-clamp-2 mt-auto">
+          <p className="text-xs md:text-sm text-neutral-650 line-clamp-2 mt-auto font-normal">
             {article.excerpt}
           </p>
         )}

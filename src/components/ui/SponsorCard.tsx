@@ -1,6 +1,7 @@
 import React from "react"
 import { cn } from "@/lib/utils"
 import { Shield, Award, Medal } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface SponsorCardProps {
   name: string
@@ -8,29 +9,36 @@ export interface SponsorCardProps {
   tier: "gold" | "silver" | "bronze"
   description: string
   websiteUrl?: string
+  buttonText?: string
 }
 
 const tierMeta = {
   gold: {
     color: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-    icon: Award,
-    label: "Gold Sponsor"
+    icon: Award
   },
   silver: {
     color: "bg-slate-400/10 text-slate-500 border-slate-400/20",
-    icon: Shield,
-    label: "Silver Sponsor"
+    icon: Shield
   },
   bronze: {
     color: "bg-amber-600/10 text-amber-700 border-amber-600/20",
-    icon: Medal,
-    label: "Bronze Sponsor"
+    icon: Medal
   }
 }
 
-const SponsorCard: React.FC<SponsorCardProps> = ({ name, logoText, tier, description, websiteUrl }) => {
+const SponsorCard: React.FC<SponsorCardProps> = ({ name, logoText, tier, description, websiteUrl, buttonText }) => {
+  const { lang } = useTranslation()
+  const isIt = lang === "it"
+
   const meta = tierMeta[tier]
   const Icon = meta.icon
+
+  const tierLabels = {
+    gold: isIt ? "Sponsor Oro" : "Gold Sponsor",
+    silver: isIt ? "Sponsor Argento" : "Silver Sponsor",
+    bronze: isIt ? "Sponsor Bronzo" : "Bronze Sponsor"
+  }
 
   return (
     <div className="flex flex-col h-full bg-white border border-neutral-200 rounded-xl p-5 hover:shadow-md transition-shadow">
@@ -42,7 +50,7 @@ const SponsorCard: React.FC<SponsorCardProps> = ({ name, logoText, tier, descrip
           )}
         >
           <Icon className="h-3 w-3" />
-          {meta.label}
+          {tierLabels[tier]}
         </span>
       </div>
 
@@ -62,7 +70,7 @@ const SponsorCard: React.FC<SponsorCardProps> = ({ name, logoText, tier, descrip
           rel="noopener noreferrer"
           className="text-xs font-semibold text-brand-red hover:underline inline-flex items-center"
         >
-          Visit Partner Website →
+          {buttonText || (isIt ? "Visita il Sito Ufficiale →" : "Visit Partner Website →")}
         </a>
       )}
     </div>

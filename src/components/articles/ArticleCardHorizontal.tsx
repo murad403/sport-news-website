@@ -5,15 +5,19 @@ import { Article } from "@/lib/types"
 import CategoryBadge from "../ui/CategoryBadge"
 import { Clock, User } from "lucide-react"
 import { formatShortDate } from "@/lib/utils"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface ArticleCardHorizontalProps {
   article: Article
 }
 
 const ArticleCardHorizontal: React.FC<ArticleCardHorizontalProps> = ({ article }) => {
+  const { lang } = useTranslation()
+  const isIt = lang === "it"
+
   return (
     <Link
-      href={`/article/${article.slug}`}
+      href={`/${lang}/article/${article.slug}`}
       className="group flex flex-col sm:flex-row gap-4 bg-white border border-neutral-200 rounded-xl overflow-hidden p-3 shadow-sm hover:shadow-md transition-shadow select-none w-full"
     >
       {/* Left Thumbnail */}
@@ -63,7 +67,7 @@ const ArticleCardHorizontal: React.FC<ArticleCardHorizontalProps> = ({ article }
             {formatShortDate(article.publishedAt)}
           </span>
           <span className="ml-auto text-neutral-400">
-            {article.readingTime} min read
+            {article.readingTime} {isIt ? "minuti lettura" : "min read"}
           </span>
         </div>
       </div>

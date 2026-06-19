@@ -1,11 +1,12 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog"
 import CategoryBadge from "@/components/ui/CategoryBadge"
 import { Users, PlusCircle, CheckCircle2, ChevronDown, ChevronUp, ShieldAlert, Image as ImageIcon, Trash2 } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 interface CommunityArticle {
   id: string
@@ -51,10 +52,45 @@ const initialCommunityArticles: CommunityArticle[] = [
   }
 ]
 
-const sportCategories = ["Football", "Tennis", "Basketball", "F1", "Cricket", "General"]
-
 export default function CommunityPage() {
-  const [articles, setArticles] = useState<CommunityArticle[]>(initialCommunityArticles)
+  const { t, lang } = useTranslation()
+  const isIt = lang === "it"
+
+  // Localized Initial Articles
+  const localizedInitialArticles = useMemo(() => {
+    return initialCommunityArticles.map(art => {
+      if (art.id === "c-1") {
+        return {
+          ...art,
+          title: isIt ? "La crescita dei vivai nel calcio moderno: perché i talenti fatti in casa sono la chiave" : art.title,
+          excerpt: isIt ? "Con i costi dei trasferimenti fuori controllo, i grandi club tornano alle origini. Esploriamo i benefici tattici e finanziari degli investimenti nei giovani del vivaio." : art.excerpt,
+          content: isIt ? "In un'epoca in cui un singolo acquisto di spicco può costare oltre 100 milioni di euro, i club di calcio affrontano enormi pressioni per bilanciare i conti. Le regole del Fair Play Finanziario (FFP) hanno costretto le proprietà a riconsiderare le strategie di allestimento delle rose. La soluzione più sostenibile è proprio sotto i loro occhi: i propri settori giovanili.\n\nClubs come Barcellona (La Masia), Ajax e Manchester United hanno storicamente costruito i loro successi su gruppi di talenti locali. Oggi vediamo l'Arsenal e il Chelsea raccogliere enormi frutti da elementi del vivaio come Bukayo Saka e Levi Colwill. Questi giocatori non solo rappresentano un costo di trasferimento pari a zero a bilancio, ma possiedono anche una connessione innata con la cultura del club, la maglia e i tifosi che i calciatori acquistati all'esterno raramente riescono ad eguagliare.\n\nDal punto di vista tattico, i ragazzi del vivaio vengono formati secondo la filosofia del club fin dalla tenera età. Quando scendono in campo con la prima squadra, conoscono già a memoria schemi di passaggio, zone di pressing e inserimenti. In definitiva, lo sviluppo giovanile non è più solo un ideale romantico; è un pilastro fondamentale per la sopravvivenza del calcio moderno." : art.content,
+          category: isIt ? "Calcio" : art.category
+        }
+      }
+      if (art.id === "c-2") {
+        return {
+          ...art,
+          title: isIt ? "Perché Charles Leclerc è il vero erede del mito di Schumacher in Ferrari" : art.title,
+          excerpt: isIt ? "Dopo le sue emozionanti vittorie a Monza e Monaco, Charles Leclerc ha dimostrato di avere la maestria di guida e la forza mentale per riportare la Scuderia Ferrari al vertice della F1." : art.excerpt,
+          content: isIt ? "La Scuderia Ferrari ha avuto molti piloti dopo il ciclo vincente di Michael Schumacher, ma nessuno ha saputo conquistare il cuore dei Tifosi come Charles Leclerc. Il pilota monegasco porta sulle spalle il peso di un'intera nazione e del marchio più leggendario del motorsport, e lo fa con grazia, velocità pura e un'incredibile passionalità.\n\nLo stile di guida di Leclerc è caratterizzato da qualifiche aggressive e sorpassi chirurgici. La sua capacità di estrarre le massime prestazioni dalla monoposto sui tracciati cittadini (dimostrata dalle pole multiple a Baku e Monaco) lo colloca in una categoria a sé. Ma è la sua forza mentale – nel riprendersi da errori strategici, guasti al motore e tragedie personali – a definire la sua stoffa da campione.\n\nCon l'arrivo di Lewis Hamilton in Ferrari la prossima stagione, in molti prevedono accesi duelli interni. Tuttavia, il legame profondo di Leclerc con Maranello lo rende il vero punto di riferimento. Proprio come Schumacher ha plasmato la Ferrari attorno a sé alla fine degli anni '90, Leclerc sta gettando le fondamenta per la nuova epoca d'oro della Ferrari sotto la guida di Fred Vasseur." : art.content,
+          category: "F1"
+        }
+      }
+      if (art.id === "c-3") {
+        return {
+          ...art,
+          title: isIt ? "L'eccessivo affidamento sul tiro da tre punti sta rovinando l'estetica del basket?" : art.title,
+          excerpt: isIt ? "La rivoluzione 'Moreyball' ha cambiato per sempre il basket. Ma la costante raffica di tiri da tre punti ha reso le partite NBA prevedibili e noiose?" : art.excerpt,
+          content: isIt ? "Entra in una qualsiasi palestra oggi e vedrai adolescenti lanciare tiri da tre punti da distanza siderale invece di esercitarsi nei sottomano o nei tiri dal mezzo angolo. La rivoluzione analitica guidata da Stephen Curry e dai Houston Rockets ha dimostrato matematicamente che tre punti valgono più di due. Come risultato, la spaziatura in NBA si è allargata a dismisura e i record di tentativi da tre vengono frantumati in ogni singola stagione.\n\nSebbene questo abbia portato a punteggi molto elevati e a valutazioni offensive da record, ha indubbiamente penalizzato la varietà estetica del gioco. I tiri in sospensione dalla media distanza, i movimenti in post-basso e le soluzioni creative in penetrazione stanno diventando specie in via d'estinzione. Al contrario, le partite spesso degenerano in ripetitivi pick-and-roll che finiscono o con un sottomano o con uno scarico verso un tiratore piazzato in angolo.\n\nQuando entrambe le squadre tentano più di 45 tiri da tre a partita, l'esito viene deciso spesso semplicemente dalla varianza di tiro. Il gioco fisico, il controllo del post e la maestria dalla media distanza delle epoche passate garantivano una battaglia tattica simile a una partita a scacchi che le sfide attuali talvolta non riescono ad offrire." : art.content,
+          category: isIt ? "Basket" : art.category
+        }
+      }
+      return art
+    })
+  }, [isIt])
+
+  const [articles, setArticles] = useState<CommunityArticle[]>(localizedInitialArticles)
   
   // Form States
   const [newTitle, setNewTitle] = useState("")
@@ -78,7 +114,7 @@ export default function CommunityPage() {
     e.preventDefault()
 
     if (!newTitle.trim() || !newExcerpt.trim() || !newContent.trim() || !newAuthor.trim()) {
-      setFormError("Please fill in all form fields to publish.")
+      setFormError(isIt ? "Compila tutti i campi per pubblicare." : "Please fill in all form fields to publish.")
       return
     }
 
@@ -111,6 +147,15 @@ export default function CommunityPage() {
     }, 1500)
   }
 
+  const sportCategories = [
+    { value: "Football", label: t.navigation.football },
+    { value: "Tennis", label: t.navigation.tennis },
+    { value: "Basketball", label: t.navigation.basketball },
+    { value: "F1", label: t.navigation.f1 },
+    { value: "Cricket", label: "Cricket" },
+    { value: "General", label: isIt ? "Generale" : "General" }
+  ]
+
   return (
     <div className="w-full flex flex-col gap-6 select-none">
       
@@ -119,10 +164,10 @@ export default function CommunityPage() {
         <div>
           <h1 className="font-headline text-3xl md:text-5xl font-extrabold uppercase text-brand-dark flex items-center gap-2">
             <Users className="h-8 w-8 text-brand-red animate-pulse" />
-            SportsPulse Fan Forum
+            {t.community.title}
           </h1>
           <p className="text-xs md:text-sm text-neutral-500 font-semibold">
-            The community section where users write and publish their own articles, analysis and opinions.
+            {t.community.subtitle}
           </p>
         </div>
 
@@ -131,14 +176,14 @@ export default function CommunityPage() {
           <DialogTrigger>
             <Button className="flex items-center gap-1.5 font-bold h-10 px-5 rounded-lg select-none cursor-pointer">
               <PlusCircle className="h-4.5 w-4.5" />
-              Write Article
+              {t.community.writeArticle}
             </Button>
           </DialogTrigger>
           
           <DialogContent className="sm:max-w-lg bg-white border border-neutral-200 text-brand-dark p-6">
             <DialogHeader>
               <DialogTitle className="font-headline text-2xl font-bold text-center text-brand-dark border-b border-neutral-100 pb-2">
-                Write Community Article
+                {t.community.modalTitle}
               </DialogTitle>
             </DialogHeader>
 
@@ -146,10 +191,10 @@ export default function CommunityPage() {
               <div className="flex flex-col items-center justify-center text-center py-8 gap-4 select-none">
                 <CheckCircle2 className="h-14 w-14 text-green-500 animate-bounce" />
                 <h3 className="font-headline text-xl font-bold text-brand-dark">
-                  Article Published!
+                  {t.community.publishedMsg}
                 </h3>
                 <p className="text-xs text-neutral-500 max-w-xs">
-                  Your analysis has been successfully added to the Fan Forum feed.
+                  {t.community.publishedDetail}
                 </p>
               </div>
             ) : (
@@ -162,10 +207,10 @@ export default function CommunityPage() {
 
                 {/* Author Name */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase text-neutral-500">Your Nickname</label>
+                  <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.nicknameLabel}</label>
                   <Input
                     type="text"
-                    placeholder="e.g. PepFanatic"
+                    placeholder={isIt ? "es. TifosoRossonero" : "e.g. PepFanatic"}
                     value={newAuthor}
                     onChange={(e) => setNewAuthor(e.target.value)}
                     required
@@ -174,10 +219,10 @@ export default function CommunityPage() {
 
                 {/* Article Title */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase text-neutral-500">Article Title</label>
+                  <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.titleLabel}</label>
                   <Input
                     type="text"
-                    placeholder="e.g. Why the Lakers need to draft a pure playmaker"
+                    placeholder={isIt ? "es. Perché la Juventus deve cambiare modulo" : "e.g. Why the Lakers need to draft a pure playmaker"}
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
                     required
@@ -187,23 +232,23 @@ export default function CommunityPage() {
                 {/* Grid Category & Excerpt */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-neutral-500">Sport Category</label>
+                    <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.categoryLabel}</label>
                     <select
                       value={newCategory}
                       onChange={(e) => setNewCategory(e.target.value)}
                       className="flex h-9 w-full rounded-md border border-neutral-200 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-red text-neutral-700 font-semibold cursor-pointer"
                     >
                       {sportCategories.map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
+                        <option key={cat.value} value={cat.value}>{cat.label}</option>
                       ))}
                     </select>
                   </div>
 
                   <div className="sm:col-span-2 space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-neutral-500">Short Summary Excerpt</label>
+                    <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.excerptLabel}</label>
                     <Input
                       type="text"
-                      placeholder="Brief one-sentence summary..."
+                      placeholder={isIt ? "Breve descrizione in una frase..." : "Brief one-sentence summary..."}
                       value={newExcerpt}
                       onChange={(e) => setNewExcerpt(e.target.value)}
                       required
@@ -213,9 +258,9 @@ export default function CommunityPage() {
 
                 {/* Article Content */}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase text-neutral-500">Article Content (Body)</label>
+                  <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.contentLabel}</label>
                   <textarea
-                    placeholder="Write your in-depth sports analysis here..."
+                    placeholder={isIt ? "Scrivi qui la tua analisi sportiva approfondita..." : "Write your in-depth sports analysis here..."}
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
                     className="flex min-h-[120px] w-full rounded-md border border-neutral-250 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-red text-neutral-800"
@@ -226,7 +271,7 @@ export default function CommunityPage() {
                 {/* Image Upload */}
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold uppercase text-neutral-500 flex items-center gap-1">
-                    <ImageIcon className="h-3.5 w-3.5" /> Article Image
+                    <ImageIcon className="h-3.5 w-3.5" /> {t.community.imageLabel}
                   </label>
                   <div className="flex flex-col gap-2">
                     <input
@@ -251,7 +296,7 @@ export default function CommunityPage() {
                           type="button"
                           onClick={() => setNewImage("")}
                           className="absolute top-2 right-2 bg-brand-dark/80 text-white rounded-full p-1.5 hover:bg-brand-red transition-colors flex items-center justify-center cursor-pointer"
-                          title="Remove Image"
+                          title={t.community.removeImage}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
@@ -262,7 +307,7 @@ export default function CommunityPage() {
 
                 <DialogFooter>
                   <Button type="submit" className="w-full mt-2 font-bold h-10">
-                    Publish to Fan Forum
+                    {t.community.publishBtn}
                   </Button>
                 </DialogFooter>
               </form>
@@ -293,7 +338,7 @@ export default function CommunityPage() {
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-brand-dark">{article.author}</span>
                       <span className="text-[9px] text-neutral-400 font-semibold uppercase">
-                        {new Date(article.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                        {new Date(article.publishedAt).toLocaleDateString(isIt ? "it-IT" : "en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                       </span>
                     </div>
                   </div>
@@ -317,7 +362,7 @@ export default function CommunityPage() {
                 </h3>
 
                 {/* Excerpt/Content */}
-                <div className="text-xs md:text-sm text-neutral-650 leading-relaxed font-normal">
+                <div className="text-xs md:text-sm text-neutral-655 leading-relaxed font-normal">
                   {isExpanded ? (
                     <div className="space-y-4">
                       {article.content.split("\n\n").map((para, i) => (
@@ -336,11 +381,11 @@ export default function CommunityPage() {
                 >
                   {isExpanded ? (
                     <>
-                      Read Less <ChevronUp className="h-3.5 w-3.5" />
+                      {t.common.readLess} <ChevronUp className="h-3.5 w-3.5" />
                     </>
                   ) : (
                     <>
-                      Read Full Article <ChevronDown className="h-3.5 w-3.5" />
+                      {t.common.readMore} <ChevronDown className="h-3.5 w-3.5" />
                     </>
                   )}
                 </button>
@@ -355,34 +400,33 @@ export default function CommunityPage() {
           <div className="bg-brand-dark text-white rounded-2xl p-5 shadow-md flex flex-col gap-4">
             <h3 className="font-headline text-xl font-bold text-brand-red uppercase border-b border-neutral-800 pb-2 flex items-center gap-1.5">
               <ShieldAlert className="h-5 w-5" />
-              Posting Guidelines
+              {t.community.guidelinesTitle}
             </h3>
             <ul className="flex flex-col gap-3 text-xs font-semibold text-neutral-350 leading-relaxed list-disc pl-4">
-              <li>
-                <strong className="text-white">Be Civil & Respectful</strong>: Avoid insults, harassment or toxic arguments with other fans.
-              </li>
-              <li>
-                <strong className="text-white">Keep it Sports Related</strong>: Articles and columns must be relevant to sports teams, players or analytics.
-              </li>
-              <li>
-                <strong className="text-white">No Copyright Violation</strong>: Avoid copy-pasting entire articles from other publications. Write in your own words.
-              </li>
-              <li>
-                <strong className="text-white">Editorial Review</strong>: The editors reserve the right to archive posts violating community standards.
-              </li>
+              {t.community.guidelines.map((guideline, idx) => {
+                const parts = guideline.split(":")
+                if (parts.length > 1) {
+                  return (
+                    <li key={idx}>
+                      <strong className="text-white">{parts[0]}</strong>: {parts.slice(1).join(":")}
+                    </li>
+                  )
+                }
+                return <li key={idx}>{guideline}</li>
+              })}
             </ul>
           </div>
 
           {/* Guidelines Box */}
           <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm text-center">
             <h4 className="font-headline text-lg font-bold text-brand-dark mb-1.5">
-              Want to join the staff?
+              {t.community.joinStaffTitle}
             </h4>
             <p className="text-xs text-neutral-500 leading-relaxed font-semibold mb-3">
-              If your community articles demonstrate high-quality analysis and engage our readers, our editorial team will reach out to pitch official staff writing opportunities!
+              {t.community.joinStaffText}
             </p>
             <Button variant="outline" className="w-full text-xs font-bold rounded-lg cursor-pointer">
-              Learn More
+              {isIt ? "Scopri di Più" : "Learn More"}
             </Button>
           </div>
         </div>

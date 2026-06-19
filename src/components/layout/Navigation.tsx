@@ -4,22 +4,11 @@ import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-
-const navItems = [
-  { label: "Home", href: "/" },
-  { label: "Football", href: "/categories/Football" },
-  { label: "Soccer Results", href: "/soccer-results" },
-  { label: "Tennis", href: "/categories/Tennis" },
-  { label: "Basketball", href: "/categories/Basketball" },
-  { label: "F1", href: "/categories/F1" },
-  { label: "Player Updates", href: "/player-updates" },
-  { label: "Statistics", href: "/statistics" },
-  { label: "Sponsors", href: "/sponsors" },
-  { label: "Community", href: "/community" }
-]
+import { useTranslation } from "@/lib/useTranslation"
 
 const Navigation: React.FC = () => {
   const pathname = usePathname()
+  const { t, lang } = useTranslation()
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -29,6 +18,19 @@ const Navigation: React.FC = () => {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const navItems = [
+    { label: t.navigation.home, href: `/${lang}` },
+    { label: t.navigation.football, href: `/${lang}/categories/Football` },
+    { label: t.navigation.soccerResults, href: `/${lang}/soccer-results` },
+    { label: t.navigation.tennis, href: `/${lang}/categories/Tennis` },
+    { label: t.navigation.basketball, href: `/${lang}/categories/Basketball` },
+    { label: t.navigation.f1, href: `/${lang}/categories/F1` },
+    { label: t.navigation.playerUpdates, href: `/${lang}/player-updates` },
+    { label: t.navigation.statistics, href: `/${lang}/statistics` },
+    { label: t.navigation.sponsors, href: `/${lang}/sponsors` },
+    { label: t.navigation.community, href: `/${lang}/community` }
+  ]
 
   return (
     <nav
@@ -43,7 +45,7 @@ const Navigation: React.FC = () => {
           {navItems.map((item) => {
             const isActive =
               pathname === item.href ||
-              (item.href !== "/" && pathname.startsWith(item.href))
+              (item.href !== `/${lang}` && pathname.startsWith(item.href))
 
             return (
               <Link

@@ -2,23 +2,28 @@ import React from "react"
 import { MatchResult } from "@/lib/types"
 import LiveBadge from "../ui/LiveBadge"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface MatchCardProps {
   match: MatchResult
   className?: string
 }
 
-// Map leagues to standard colors
+// Map leagues to standard colors (localized matches support)
 const leagueColors: Record<string, string> = {
   "Premier League": "text-purple-600 bg-purple-50 border-purple-100",
   "La Liga": "text-sky-600 bg-sky-50 border-sky-100",
   "Serie A": "text-blue-600 bg-blue-50 border-blue-100",
   "Bundesliga": "text-red-600 bg-red-50 border-red-100",
   "Ligue 1": "text-yellow-600 bg-yellow-50 border-yellow-100",
-  "Champions League": "text-indigo-600 bg-indigo-50 border-indigo-100"
+  "Champions League": "text-indigo-600 bg-indigo-50 border-indigo-100",
+  "Nations League": "text-emerald-600 bg-emerald-50 border-emerald-100",
+  "Amichevole Internazionale": "text-neutral-600 bg-neutral-50 border-neutral-100",
+  "International Friendly": "text-neutral-600 bg-neutral-50 border-neutral-100"
 }
 
 const MatchCard: React.FC<MatchCardProps> = ({ match, className }) => {
+  const { lang } = useTranslation()
   const isLive = match.status === "live"
   const isUpcoming = match.status === "upcoming"
   const isFT = match.status === "ft"
@@ -28,27 +33,34 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, className }) => {
   // Shorten date format for upcoming games
   const getUpcomingTime = (dateStr: string) => {
     const d = new Date(dateStr)
-    return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })
+    return d.toLocaleTimeString(lang === "it" ? "it-IT" : "en-US", { hour: "2-digit", minute: "2-digit", hour12: false })
   }
 
   // Generate team emoji placeholders
   const getTeamIcon = (teamName: string) => {
-    // Basic mapping
     const icons: Record<string, string> = {
       Italy: "🇮🇹",
+      Italia: "🇮🇹",
       Spain: "🇪🇸",
+      Spagna: "🇪🇸",
       France: "🇫🇷",
+      Francia: "🇫🇷",
       Germany: "🇩🇪",
+      Germania: "🇩🇪",
       Arsenal: "🔴",
       Chelsea: "🔵",
       "Real Madrid": "⚪",
       Barcelona: "🔵🔴",
+      Barcellona: "🔵🔴",
       "AC Milan": "🔴⚫",
       "Inter Milan": "🔵⚫",
+      Inter: "🔵⚫",
       "Bayern Munich": "🔴",
+      "Bayern Monaco": "🔴",
       Dortmund: "🟡⚫",
       PSG: "🔵",
       Marseille: "⚪🔵",
+      Marsiglia: "⚪🔵",
       Juventus: "⚪⚫",
       Napoli: "🔵",
       Liverpool: "🔴",
@@ -117,11 +129,11 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, className }) => {
           <LiveBadge className="px-1.5 py-0 text-[8px]" />
         ) : isFT ? (
           <span className="text-[9px] font-extrabold uppercase bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded leading-none">
-            FT
+            {lang === "it" ? "FINALE" : "FT"}
           </span>
         ) : (
           <span className="text-[9px] font-bold uppercase bg-neutral-50 text-neutral-500 border border-neutral-200/50 px-1.5 py-0.5 rounded leading-none flex items-center gap-1">
-            <span>Upcoming</span>
+            <span>{lang === "it" ? "In arrivo" : "Upcoming"}</span>
             <span className="text-brand-red font-semibold">{getUpcomingTime(match.matchDate)}</span>
           </span>
         )}

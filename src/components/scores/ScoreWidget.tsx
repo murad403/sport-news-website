@@ -3,27 +3,31 @@ import { MatchResult } from "@/lib/types"
 import LiveBadge from "../ui/LiveBadge"
 import { cn } from "@/lib/utils"
 import { Calendar, Clock } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 export interface ScoreWidgetProps {
   match: MatchResult
 }
 
 const ScoreWidget: React.FC<ScoreWidgetProps> = ({ match }) => {
+  const { lang } = useTranslation()
+  const isIt = lang === "it"
+
   const isLive = match.status === "live"
   const isUpcoming = match.status === "upcoming"
   const isFT = match.status === "ft"
 
   const getUpcomingTime = (dateStr: string) => {
     const d = new Date(dateStr)
-    return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })
+    return d.toLocaleTimeString(isIt ? "it-IT" : "en-US", { hour: "2-digit", minute: "2-digit", hour12: false })
   }
 
   const getTeamIcon = (teamName: string) => {
     const icons: Record<string, string> = {
-      Italy: "🇮🇹", Spain: "🇪🇸", France: "🇫🇷", Germany: "🇩🇪",
-      Arsenal: "🔴", Chelsea: "🔵", "Real Madrid": "⚪", Barcelona: "🔵🔴",
-      "AC Milan": "🔴⚫", "Inter Milan": "🔵⚫", "Bayern Munich": "🔴",
-      Dortmund: "🟡⚫", PSG: "🔵", Marseille: "⚪🔵", Juventus: "⚪⚫",
+      Italy: "🇮🇹", Italia: "🇮🇹", Spain: "🇪🇸", Spagna: "🇪🇸", France: "🇫🇷", Francia: "🇫🇷", Germany: "🇩🇪", Germania: "🇩🇪",
+      Arsenal: "🔴", Chelsea: "🔵", "Real Madrid": "⚪", Barcelona: "🔵🔴", Barcellona: "🔵🔴",
+      "AC Milan": "🔴⚫", "Inter Milan": "🔵⚫", Inter: "🔵⚫", "Bayern Munich": "🔴", "Bayern Monaco": "🔴",
+      Dortmund: "🟡⚫", PSG: "🔵", Marseille: "⚪🔵", Marsiglia: "⚪🔵", Juventus: "⚪⚫",
       Napoli: "🔵", Liverpool: "🔴", "Manchester Utd": "🔴", "Man City": "🔵"
     }
     return icons[teamName] || "⚽"
@@ -44,7 +48,7 @@ const ScoreWidget: React.FC<ScoreWidgetProps> = ({ match }) => {
         )}
         {isFT && (
           <span className="text-xs font-extrabold text-neutral-400 bg-neutral-50 border border-neutral-200 px-2 py-0.5 rounded">
-            Full Time
+            {isIt ? "Finale" : "Full Time"}
           </span>
         )}
         {isUpcoming && (
@@ -86,7 +90,7 @@ const ScoreWidget: React.FC<ScoreWidgetProps> = ({ match }) => {
       {/* 3. Right: Match Date */}
       <div className="flex items-center gap-1 text-xs text-neutral-400 font-medium md:justify-end shrink-0 select-none">
         <Calendar className="h-3.5 w-3.5" />
-        <span>{new Date(match.matchDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+        <span>{new Date(match.matchDate).toLocaleDateString(isIt ? "it-IT" : "en-US", { month: "short", day: "numeric" })}</span>
       </div>
     </div>
   )

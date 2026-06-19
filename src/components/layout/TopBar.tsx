@@ -1,18 +1,29 @@
+"use client"
+
 import React from "react"
 import { MessageSquare } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 const TopBar: React.FC = () => {
+  const { t, lang } = useTranslation()
+
+  // Format date dynamically based on language
+  const formattedDate = new Date().toLocaleDateString(
+    lang === "it" ? "it-IT" : "en-US",
+    { weekday: "long", year: "numeric", month: "long", day: "numeric" }
+  )
+
   return (
     <div className="bg-brand-dark h-9 w-full flex items-center justify-between px-4 text-white text-xs border-b border-white/10 select-none">
       {/* Date */}
-      <div className="font-medium">
-        Thursday, June 18, 2026
+      <div className="font-medium capitalize">
+        {formattedDate}
       </div>
 
       {/* Social Media Links */}
       <div className="flex items-center gap-4">
         <span className="hidden sm:inline text-neutral-400 text-[10px] uppercase font-bold tracking-wider">
-          Follow Us:
+          {t.common.followUs}
         </span>
         <div className="flex items-center gap-3">
           <a

@@ -1,5 +1,5 @@
 import React from "react"
-import { mockArticles } from "@/lib/mockData"
+import { getLocalArticles } from "@/lib/localizer"
 import LiveScoresBar from "@/components/home/LiveScoresBar"
 import HeroSection from "@/components/home/HeroSection"
 import FeaturedArticles from "@/components/home/FeaturedArticles"
@@ -8,10 +8,17 @@ import AdBanner from "@/components/home/AdBanner"
 
 export const revalidate = 60 // Revalidate home page every 60s
 
-export default function HomePage() {
+export default async function HomePage({
+  params
+}: {
+  params: Promise<{ lang: string }>
+}) {
+  const { lang } = await params
+  const articles = getLocalArticles(lang)
+
   // Separate articles for homepage components
-  const heroArticles = mockArticles.slice(0, 3)
-  const featuredArticles = mockArticles.slice(3, 7)
+  const heroArticles = articles.slice(0, 3)
+  const featuredArticles = articles.slice(3, 7)
 
   return (
     <div className="flex flex-col w-full gap-2">

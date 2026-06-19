@@ -2,26 +2,33 @@ import React from "react"
 import Image from "next/image"
 import { Shield, Sparkles, Trophy, Users, Heart } from "lucide-react"
 
-export default function AboutPage() {
+export default async function AboutPage({
+  params
+}: {
+  params: Promise<{ lang: string }>
+}) {
+  const { lang } = await params
+  const isIt = lang === "it"
+
   const team = [
-    { name: "Alessandro Bianchi", role: "Editor-in-Chief", image: "https://picsum.photos/150/150?random=a" },
-    { name: "Sarah Jenkins", role: "Senior Tennis Analyst", image: "https://picsum.photos/150/150?random=b" },
-    { name: "David Croft", role: "Motorsport Correspondent", image: "https://picsum.photos/150/150?random=c" },
-    { name: "Marco Rossi", role: "Lead Football Reporter", image: "https://picsum.photos/150/150?random=d" }
+    { name: "Alessandro Bianchi", role: isIt ? "Direttore Editoriale" : "Editor-in-Chief", image: "https://picsum.photos/150/150?random=a" },
+    { name: "Sarah Jenkins", role: isIt ? "Analista Tennis Senior" : "Senior Tennis Analyst", image: "https://picsum.photos/150/150?random=b" },
+    { name: "David Croft", role: isIt ? "Corrispondente Motorsport" : "Motorsport Correspondent", image: "https://picsum.photos/150/150?random=c" },
+    { name: "Marco Rossi", role: isIt ? "Inviato Speciale Calcio" : "Lead Football Reporter", image: "https://picsum.photos/150/150?random=d" }
   ]
 
   const stats = [
-    { value: "2018", label: "Founded Year" },
-    { value: "50,000+", label: "Articles Published" },
-    { value: "5.2 Million", label: "Monthly Readers" },
-    { value: "15+", label: "Sports Covered" }
+    { value: "2018", label: isIt ? "Anno di Fondazione" : "Founded Year" },
+    { value: "50.000+", label: isIt ? "Articoli Pubblicati" : "Articles Published" },
+    { value: "5,2 Milioni", label: isIt ? "Lettori Mensili" : "Monthly Readers" },
+    { value: "15+", label: isIt ? "Sport Coperti" : "Sports Covered" }
   ]
 
   const timeline = [
-    { year: "2018", title: "SportsPulse Launch", desc: "Initially started as a local soccer news blog, SportsPulse was born out of passion for sports analysis." },
-    { year: "2020", title: "Expansion to Motorsports & Tennis", desc: "Brought on specialized correspondents to expand reporting into Formula 1, tennis Grand Slams, and basketball leagues." },
-    { year: "2023", title: "Live Match Center Rollout", desc: "Introduced real-time scoreboard widgets and automated statistic tables for major European soccer leagues." },
-    { year: "2026", title: "Site Redesign", desc: "Relaunched the platform with the current red-and-dark aesthetic, optimizing for mobile readers and high-speed data delivery." }
+    { year: "2018", title: isIt ? "Lancio di SportsPulse" : "SportsPulse Launch", desc: isIt ? "Inizialmente nato come blog locale di notizie calcistiche, SportsPulse è nato dalla passione per l'analisi sportiva." : "Initially started as a local soccer news blog, SportsPulse was born out of passion for sports analysis." },
+    { year: "2020", title: isIt ? "Espansione a Motori e Tennis" : "Expansion to Motorsports & Tennis", desc: isIt ? "Assunzione di corrispondenti specializzati per espandere il reporting a Formula 1, tennis Grand Slam e campionati di basket." : "Brought on specialized correspondents to expand reporting into Formula 1, tennis Grand Slams, and basketball leagues." },
+    { year: "2023", title: isIt ? "Rilascio Centro Partite Live" : "Live Match Center Rollout", desc: isIt ? "Introdotte widget segnapunti in tempo reale e tabelle statistiche automatizzate per i principali campionati di calcio europei." : "Introduced real-time scoreboard widgets and automated statistic tables for major European soccer leagues." },
+    { year: "2026", title: isIt ? "Riprogettazione del Sito" : "Site Redesign", desc: isIt ? "Rilancio della piattaforma con l'attuale estetica rossa e scura, ottimizzando per i lettori da mobile e l'alta velocità di caricamento." : "Relaunched the platform with the current red-and-dark aesthetic, optimizing for mobile readers and high-speed data delivery." }
   ]
 
   return (
@@ -32,13 +39,16 @@ export default function AboutPage() {
         <div className="max-w-3xl flex flex-col gap-4 relative z-10">
           <span className="inline-flex items-center gap-1.5 bg-brand-red/10 border border-brand-red/20 text-brand-red px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider w-max">
             <Trophy className="h-4 w-4" />
-            Our Mission
+            {isIt ? "La Nostra Missione" : "Our Mission"}
           </span>
           <h1 className="font-headline text-3xl md:text-5xl lg:text-6xl font-extrabold uppercase tracking-tight text-white leading-none">
-            Empowering Sports Fans Everywhere
+            {isIt ? "Diamo Voce ai Tifosi di Tutto il Mondo" : "Empowering Sports Fans Everywhere"}
           </h1>
           <p className="text-sm md:text-base text-neutral-350 leading-relaxed font-light mt-2">
-            At SportsPulse, we believe sports news should be fast, highly accurate, and in-depth. Our dedicated team of analysts, reporters, and coordinators work around the clock to deliver real-time match reports, transfer rumors, and statistical analyses so that you never miss a beat of the game.
+            {isIt 
+              ? "In SportsPulse crediamo che le notizie sportive debbano essere rapide, altamente accurate e approfondite. Il nostro team di analisti, reporter e collaboratori lavora 24 ore su 24 per fornire risultati live, indiscrezioni di mercato e analisi statistiche, per non farti perdere mai un istante di gioco."
+              : "At SportsPulse, we believe sports news should be fast, highly accurate, and in-depth. Our dedicated team of analysts, reporters, and coordinators work around the clock to deliver real-time match reports, transfer rumors, and statistical analyses so that you never miss a beat of the game."
+            }
           </p>
         </div>
         <div className="absolute bottom-0 right-0 opacity-10 font-headline text-9xl font-black translate-x-10 translate-y-10 uppercase tracking-tighter">
@@ -65,7 +75,7 @@ export default function AboutPage() {
         <div className="border-b border-neutral-200 pb-3">
           <h2 className="font-headline text-2xl md:text-3xl font-extrabold uppercase text-brand-dark flex items-center gap-2">
             <Users className="h-6 w-6 text-brand-red" />
-            Meet Our Experts
+            {isIt ? "Incontra i Nostri Esperti" : "Meet Our Experts"}
           </h2>
         </div>
 
@@ -93,7 +103,7 @@ export default function AboutPage() {
         <div className="border-b border-neutral-200 pb-3">
           <h2 className="font-headline text-2xl md:text-3xl font-extrabold uppercase text-brand-dark flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-brand-red" />
-            Our History Timeline
+            {isIt ? "La Nostra Storia" : "Our History Timeline"}
           </h2>
         </div>
 

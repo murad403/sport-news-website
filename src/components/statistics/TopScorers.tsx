@@ -1,8 +1,12 @@
 import React from "react"
 import { mockTopScorers } from "@/lib/mockData"
 import { Award } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 const TopScorers: React.FC = () => {
+  const { t, lang } = useTranslation()
+  const isIt = lang === "it"
+
   return (
     <div className="w-full bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-sm select-none">
       
@@ -10,9 +14,9 @@ const TopScorers: React.FC = () => {
       <div className="bg-brand-dark text-white px-5 py-4 flex items-center justify-between">
         <h3 className="font-headline text-xl font-bold uppercase tracking-wider flex items-center gap-2">
           <Award className="h-5 w-5 text-brand-red" />
-          Top Scorers
+          {isIt ? "Classifica Marcatori" : "Top Scorers"}
         </h3>
-        <span className="text-xs font-bold text-neutral-400">All Leagues</span>
+        <span className="text-xs font-bold text-neutral-400">{isIt ? "Tutti i Campionati" : "All Leagues"}</span>
       </div>
 
       {/* Table Grid */}
@@ -20,12 +24,12 @@ const TopScorers: React.FC = () => {
         <table className="w-full text-sm text-left border-collapse">
           <thead>
             <tr className="bg-neutral-50 text-neutral-500 font-bold border-b border-neutral-200 text-xs md:text-sm select-none">
-              <th className="px-4 py-3 text-center w-12">Rank</th>
-              <th className="px-4 py-3">Player Name</th>
-              <th className="px-4 py-3">Club</th>
-              <th className="px-3 py-3 text-center">Goals</th>
-              <th className="px-3 py-3 text-center">Assists</th>
-              <th className="px-3 py-3 text-center">Matches</th>
+              <th className="px-4 py-3 text-center w-12">{isIt ? "Pos" : "Rank"}</th>
+              <th className="px-4 py-3">{isIt ? "Giocatore" : "Player Name"}</th>
+              <th className="px-4 py-3">{isIt ? "Squadra" : "Club"}</th>
+              <th className="px-3 py-3 text-center">{isIt ? "Gol" : "Goals"}</th>
+              <th className="px-3 py-3 text-center">Assist</th>
+              <th className="px-3 py-3 text-center">{isIt ? "Partite" : "Matches"}</th>
             </tr>
           </thead>
           <tbody>

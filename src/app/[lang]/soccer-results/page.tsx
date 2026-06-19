@@ -1,40 +1,52 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { mockMatchResults } from "@/lib/mockData"
+import { getLocalMatchResults } from "@/lib/localizer"
 import ScoreWidget from "@/components/scores/ScoreWidget"
 import Button from "@/components/ui/Button"
-import { Calendar, Filter, Award } from "lucide-react"
-
-const leagues = [
-  "All Leagues",
-  "Premier League",
-  "La Liga",
-  "Serie A",
-  "Bundesliga",
-  "Champions League",
-  "Ligue 1"
-]
+import { Filter, Award } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 export default function SoccerResultsPage() {
+  const { t, lang } = useTranslation()
+  const isIt = lang === "it"
+
   const [activeDateTab, setActiveDateTab] = useState<"today" | "yesterday" | "week">("today")
   const [selectedLeague, setSelectedLeague] = useState("All Leagues")
   const [visibleCount, setVisibleCount] = useState(6)
 
-  // Filter match results based on tabs
+  // Memoized localized match results
+  const matchesData = useMemo(() => getLocalMatchResults(lang), [lang])
+
+  // Leagues filters list mapped dynamically
+  const leagues = useMemo(() => [
+    { value: "All Leagues", label: isIt ? "Tutti i Campionati" : "All Leagues" },
+    { value: "Premier League", label: "Premier League" },
+    { value: "La Liga", label: "La Liga" },
+    { value: "Serie A", label: "Serie A" },
+    { value: "Bundesliga", label: "Bundesliga" },
+    { value: "Champions League", label: "Champions League" },
+    { value: "Ligue 1", label: "Ligue 1" },
+    { value: "Nations League", label: "Nations League" },
+    { value: "Amichevole Internazionale", label: "Amichevole Internazionale" }
+  ], [isIt])
+
+  // Filter match results based on tabs and selected league
   const filteredMatches = useMemo(() => {
-    return mockMatchResults.filter((match) => {
+    return matchesData.filter((match) => {
       // 1. League Filter
-      if (selectedLeague !== "All Leagues" && match.league !== selectedLeague) {
+      if (selectedLeague !== "All Leagues" && 
+          match.league.toLowerCase() !== selectedLeague.toLowerCase() &&
+          !(selectedLeague === "Amichevole Internazionale" && match.league === "Amichevole Internazionale")
+      ) {
         return false
       }
 
-      // 2. Date Filter (Mock logic based on status and dates in mockData)
+      // 2. Date Filter (Mock logic based on June 18 / 17 dates in mockData)
       const date = new Date(match.matchDate)
       const day = date.getUTCDate()
 
       if (activeDateTab === "today") {
-        // Today is June 18, 2026 (based on timestamp in mockData)
         return day === 18
       } else if (activeDateTab === "yesterday") {
         return day === 17
@@ -43,7 +55,7 @@ export default function SoccerResultsPage() {
         return true
       }
     })
-  }, [activeDateTab, selectedLeague])
+  }, [matchesData, activeDateTab, selectedLeague])
 
   // Group filtered results by league
   const groupedMatches = useMemo(() => {
@@ -69,10 +81,10 @@ export default function SoccerResultsPage() {
       {/* Page Header */}
       <div>
         <h1 className="font-headline text-3xl md:text-5xl font-extrabold uppercase text-brand-dark flex items-center gap-2">
-          ⚽ Soccer Match Center
+          ⚽ {isIt ? "Centro Partite Calcio" : "Soccer Match Center"}
         </h1>
         <p className="text-xs md:text-sm text-neutral-500 font-semibold">
-          Real-time score updates, recent results, and upcoming match fixtures.
+          {t.soccerResults.subtitle}
         </p>
       </div>
 
@@ -89,7 +101,7 @@ export default function SoccerResultsPage() {
               : "text-neutral-500 hover:text-brand-dark"
           }`}
         >
-          Today (Jun 18)
+          {isIt ? "Oggi (18 Giu)" : "Today (Jun 18)"}
         </button>
         <button
           onClick={() => {
@@ -102,7 +114,7 @@ export default function SoccerResultsPage() {
               : "text-neutral-500 hover:text-brand-dark"
           }`}
         >
-          Yesterday (Jun 17)
+          {isIt ? "Ieri (17 Giu)" : "Yesterday (Jun 17)"}
         </button>
         <button
           onClick={() => {
@@ -115,7 +127,7 @@ export default function SoccerResultsPage() {
               : "text-neutral-500 hover:text-brand-dark"
           }`}
         >
-          This Week
+          {isIt ? "Questa Settimana" : "This Week"}
         </button>
       </div>
 
@@ -126,18 +138,18 @@ export default function SoccerResultsPage() {
         </span>
         {leagues.map((league) => (
           <button
-            key={league}
+            key={league.value}
             onClick={() => {
-              setSelectedLeague(league)
+              setSelectedLeague(league.value)
               setVisibleCount(6)
             }}
             className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase whitespace-nowrap transition-colors cursor-pointer border ${
-              selectedLeague === league
+              selectedLeague === league.value
                 ? "bg-brand-red text-white border-brand-red"
                 : "bg-white text-neutral-600 border-neutral-250 hover:bg-neutral-50"
             }`}
           >
-            {league}
+            {league.label}
           </button>
         ))}
       </div>
@@ -154,7 +166,7 @@ export default function SoccerResultsPage() {
                   {leagueName}
                 </h2>
                 <span className="text-[10px] text-neutral-400 font-bold bg-neutral-100 px-2 py-0.5 rounded">
-                  {matches.length} {matches.length === 1 ? "Match" : "Matches"}
+                  {matches.length} {isIt ? (matches.length === 1 ? "Partita" : "Partite") : (matches.length === 1 ? "Match" : "Matches")}
                 </span>
               </div>
 
@@ -171,14 +183,14 @@ export default function SoccerResultsPage() {
           {hasMore && (
             <div className="flex justify-center mt-4 select-none">
               <Button onClick={handleLoadMore} variant="outline" className="px-8 font-semibold">
-                Load More Matches
+                {isIt ? "Carica Altre Partite" : "Load More Matches"}
               </Button>
             </div>
           )}
         </div>
       ) : (
         <div className="bg-white border border-neutral-200 rounded-xl p-12 text-center text-neutral-500">
-          No matches found for the selected filters.
+          {isIt ? "Nessuna partita trovata per i filtri selezionati." : "No matches found for the selected filters."}
         </div>
       )}
 

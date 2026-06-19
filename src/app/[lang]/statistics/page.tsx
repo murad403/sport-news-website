@@ -7,8 +7,12 @@ import LeagueTable from "@/components/statistics/LeagueTable"
 import TopScorers from "@/components/statistics/TopScorers"
 import PlayerStatsTable from "@/components/statistics/PlayerStatsTable"
 import { BarChart3 } from "lucide-react"
+import { useTranslation } from "@/lib/useTranslation"
 
 export default function StatisticsPage() {
+  const { t, lang } = useTranslation()
+  const isIt = lang === "it"
+
   const [selectedLeague, setSelectedLeague] = useState("Premier League")
 
   return (
@@ -17,11 +21,11 @@ export default function StatisticsPage() {
       {/* Page Header */}
       <div>
         <h1 className="font-headline text-3xl md:text-5xl font-extrabold uppercase text-brand-dark flex items-center gap-2">
-          <BarChart3 className="h-8 w-8 text-brand-red" />
-          Sports Analytics & Stats
+          <BarChart3 className="h-8 w-8 text-brand-red animate-pulse" />
+          {t.statistics.title}
         </h1>
         <p className="text-xs md:text-sm text-neutral-500 font-semibold">
-          Detailed standings tables, player performance statistics, and league leaders.
+          {t.statistics.subtitle}
         </p>
       </div>
 
@@ -31,13 +35,13 @@ export default function StatisticsPage() {
         {/* Tabs Triggers List */}
         <TabsList className="w-full max-w-md grid grid-cols-3 mb-6 bg-neutral-100 p-1 rounded-xl border border-neutral-200">
           <TabsTrigger value="tables" className="font-bold uppercase text-xs md:text-sm">
-            League Tables
+            {isIt ? "Classifiche" : "League Tables"}
           </TabsTrigger>
           <TabsTrigger value="scorers" className="font-bold uppercase text-xs md:text-sm">
-            Top Scorers
+            {t.statistics.topScorers}
           </TabsTrigger>
           <TabsTrigger value="players" className="font-bold uppercase text-xs md:text-sm">
-            Player Stats
+            {isIt ? "Statistiche" : "Player Stats"}
           </TabsTrigger>
         </TabsList>
 
@@ -45,10 +49,12 @@ export default function StatisticsPage() {
         <TabsContent value="tables" className="flex flex-col gap-4">
           {/* League Select Trigger */}
           <div className="w-full max-w-xs flex flex-col gap-1.5 mb-2">
-            <span className="text-xs font-bold uppercase text-neutral-500">Select League:</span>
+            <span className="text-xs font-bold uppercase text-neutral-500">
+              {isIt ? "Seleziona Campionato:" : "Select League:"}
+            </span>
             <Select value={selectedLeague} onValueChange={setSelectedLeague}>
               <SelectTrigger>
-                <SelectValue placeholder="Select League" />
+                <SelectValue placeholder={isIt ? "Seleziona Campionato" : "Select League"} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Premier League">Premier League</SelectItem>

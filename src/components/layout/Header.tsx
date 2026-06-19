@@ -1,15 +1,21 @@
 "use client"
 import React, { useState } from "react"
 import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
 import { Menu, User, Mail } from "lucide-react"
 import SearchBar from "../ui/SearchBar"
 import Button from "../ui/Button"
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "../ui/Sheet"
 import { Dialog, DialogTrigger, DialogContent } from "../ui/Dialog"
 import Input from "../ui/Input"
-
+import { useTranslation } from "@/lib/useTranslation"
+import { cn } from "@/lib/utils"
 
 const Header: React.FC = () => {
+  const { t, lang } = useTranslation()
+  const pathname = usePathname()
+  const router = useRouter()
+
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [registerName, setRegisterName] = useState("")
@@ -54,19 +60,35 @@ const Header: React.FC = () => {
     }
   }
 
+  const handleLanguageChange = (newLang: "it" | "en") => {
+    if (newLang === lang) return
+
+    // Replace locale in the current pathname
+    const segments = pathname.split("/")
+    if (segments[1] === "it" || segments[1] === "en") {
+      segments[1] = newLang
+    } else {
+      // Fallback
+      segments.unshift(newLang)
+    }
+
+    const newPath = segments.join("/") || "/"
+    router.push(newPath)
+  }
+
   const mobileNavLinks = [
-    { label: "Home", href: "/" },
-    { label: "Football", href: "/categories/Football" },
-    { label: "Soccer Results", href: "/soccer-results" },
-    { label: "Tennis", href: "/categories/Tennis" },
-    { label: "Basketball", href: "/categories/Basketball" },
-    { label: "F1", href: "/categories/F1" },
-    { label: "Player Updates", href: "/player-updates" },
-    { label: "Statistics", href: "/statistics" },
-    { label: "Sponsors", href: "/sponsors" },
-    { label: "Community", href: "/community" },
-    { label: "About Us", href: "/about" },
-    { label: "Contact", href: "/contact" }
+    { label: t.navigation.home, href: `/${lang}` },
+    { label: t.navigation.football, href: `/${lang}/categories/Football` },
+    { label: t.navigation.soccerResults, href: `/${lang}/soccer-results` },
+    { label: t.navigation.tennis, href: `/${lang}/categories/Tennis` },
+    { label: t.navigation.basketball, href: `/${lang}/categories/Basketball` },
+    { label: t.navigation.f1, href: `/${lang}/categories/F1` },
+    { label: t.navigation.playerUpdates, href: `/${lang}/player-updates` },
+    { label: t.navigation.statistics, href: `/${lang}/statistics` },
+    { label: t.navigation.sponsors, href: `/${lang}/sponsors` },
+    { label: t.navigation.community, href: `/${lang}/community` },
+    { label: t.navigation.aboutUs, href: `/${lang}/about` },
+    { label: t.navigation.contact, href: `/${lang}/contact` }
   ]
 
   return (
@@ -105,16 +127,39 @@ const Header: React.FC = () => {
         </div>
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-1.5">
+        <Link href={`/${lang}`} className="flex items-center gap-1.5">
           <span className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-brand-red uppercase">
             ⚽ SportsPulse
           </span>
         </Link>
 
-        {/* Right Section: Search & Login */}
+        {/* Right Section: Search, Language picker & Login */}
         <div className="flex items-center gap-4">
           <div className="hidden md:block">
             <SearchBar />
+          </div>
+
+          {/* Language Selector */}
+          <div className="flex items-center gap-1 border border-neutral-250 bg-neutral-50 hover:bg-neutral-100 rounded-lg px-2.5 py-1.5 transition-colors duration-150 shadow-xs">
+            <button
+              onClick={() => handleLanguageChange("it")}
+              className={cn(
+                "text-[10px] font-extrabold uppercase px-1 cursor-pointer transition-colors duration-150",
+                lang === "it" ? "text-brand-red" : "text-neutral-450 hover:text-neutral-800"
+              )}
+            >
+              IT
+            </button>
+            <span className="text-neutral-300 text-[10px]">|</span>
+            <button
+              onClick={() => handleLanguageChange("en")}
+              className={cn(
+                "text-[10px] font-extrabold uppercase px-1 cursor-pointer transition-colors duration-150",
+                lang === "en" ? "text-brand-red" : "text-neutral-450 hover:text-neutral-800"
+              )}
+            >
+              EN
+            </button>
           </div>
 
           <Dialog open={showLogin} onOpenChange={handleOpenChange}>
@@ -124,7 +169,7 @@ const Header: React.FC = () => {
                   <User className="h-5 w-5 text-neutral-600" />
                 </button>
                 <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-full text-xs font-semibold">
-                  Logout
+                  {lang === "it" ? "Esci" : "Logout"}
                 </Button>
               </div>
             ) : (
@@ -148,7 +193,7 @@ const Header: React.FC = () => {
                 authMethod === "list" ? (
                   /* View 1: Sign In List Options */
                   <div className="flex flex-col items-center gap-3 w-full text-center select-none">
-                    <h2 className="text-2xl font-bold text-brand-dark mb-3">Sign in</h2>
+                    <h2 className="text-2xl font-bold text-brand-dark mb-3">{t.auth.signInTitle}</h2>
                     
                     <button
                       onClick={() => alert("Sign in with Apple")}
@@ -157,7 +202,7 @@ const Header: React.FC = () => {
                       <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
                         <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.54 9.103 1.51 12.06 1.005 1.45 2.187 3.068 3.757 3.007 1.516-.06 2.09-.98 3.92-.98 1.82 0 2.347.98 3.93.95 1.618-.03 2.654-1.47 3.652-2.922 1.153-1.688 1.63-3.32 1.66-3.41-.03-.01-3.178-1.22-3.21-4.82-.03-3.02 2.47-4.47 2.58-4.54-1.42-2.08-3.6-2.31-4.38-2.36-2.062-.167-3.24 1.078-4.09 1.078zM16.14 3.75c.828-1.006 1.386-2.41 1.233-3.812-1.2.05-2.656.8-3.518 1.802-.74.85-1.39 2.27-1.216 3.655 1.34.1 2.7-.66 3.5-1.645z" />
                       </svg>
-                      <span>Sign in with Apple</span>
+                      <span>{t.auth.withApple}</span>
                     </button>
 
                     <button
@@ -167,7 +212,7 @@ const Header: React.FC = () => {
                       <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                       </svg>
-                      <span>Log in with Facebook</span>
+                      <span>{t.auth.withFacebook}</span>
                     </button>
 
                     <button
@@ -180,7 +225,7 @@ const Header: React.FC = () => {
                         <path fill="#FBBC05" d="M5.24 10.55c-.23-.7-.36-1.45-.36-2.22s.13-1.52.36-2.22L1.39 3.12C.5 4.9.01 6.89.01 9c0 2.11.49 4.1 1.38 5.88l3.85-3.33z" />
                         <path fill="#34A853" d="M12 17.5c-3.36 0-5.86-1.8-6.76-4.5L1.39 15.99c1.98 3.89 5.96 6.56 10.61 6.56 3 0 5.83-1.04 8.01-2.83l-3.66-2.84c-1.18.79-2.69 1.28-4.36 1.28z" />
                       </svg>
-                      <span>Sign in with Google</span>
+                      <span>{t.auth.withGoogle}</span>
                     </button>
 
                     <button
@@ -188,23 +233,23 @@ const Header: React.FC = () => {
                       className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-sm font-semibold rounded-lg border border-neutral-200/60 transition-colors cursor-pointer"
                     >
                       <Mail className="h-5 w-5 text-neutral-600 shrink-0" />
-                      <span>Log in with email and password</span>
+                      <span>{t.auth.withEmail}</span>
                     </button>
 
                     <div className="text-xs text-neutral-500 mt-4">
-                      Don't have an account?{" "}
+                      {t.auth.noAccount}{" "}
                       <span onClick={() => { setAuthMode("register"); setAuthMethod("list"); }} className="text-brand-red hover:text-brand-red/90 cursor-pointer hover:underline font-bold">
-                        Register
+                        {t.auth.registerLink}
                       </span>
                     </div>
                   </div>
                 ) : (
                   /* View 2: Sign In Email Input Form */
                   <form onSubmit={handleLoginSubmit} className="flex flex-col gap-4 text-left">
-                    <h2 className="text-lg font-bold text-brand-dark text-center mb-2">Log in with email and password</h2>
+                    <h2 className="text-lg font-bold text-brand-dark text-center mb-2">{t.auth.withEmail}</h2>
                     
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-neutral-500">Email Address</label>
+                      <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.emailLabel}</label>
                       <Input
                         type="email"
                         placeholder="name@example.com"
@@ -216,7 +261,7 @@ const Header: React.FC = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-neutral-500">Password</label>
+                      <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.passwordLabel}</label>
                       <Input
                         type="password"
                         placeholder="••••••••"
@@ -228,11 +273,11 @@ const Header: React.FC = () => {
                     </div>
 
                     <Button type="submit" className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg">
-                      Sign In
+                      {t.auth.signInBtn}
                     </Button>
 
                     <button type="button" onClick={() => setAuthMethod("list")} className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer">
-                      Back to options
+                      {t.auth.backBtn}
                     </button>
                   </form>
                 )
@@ -240,7 +285,7 @@ const Header: React.FC = () => {
                 authMethod === "list" ? (
                   /* View 3: Register List Options */
                   <div className="flex flex-col items-center gap-3 w-full text-center select-none">
-                    <h2 className="text-2xl font-bold text-brand-dark mb-3">Create your account</h2>
+                    <h2 className="text-2xl font-bold text-brand-dark mb-3">{t.auth.signUpTitle}</h2>
                     
                     <button
                       onClick={() => alert("Sign up with Apple")}
@@ -249,7 +294,7 @@ const Header: React.FC = () => {
                       <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
                         <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.54 9.103 1.51 12.06 1.005 1.45 2.187 3.068 3.757 3.007 1.516-.06 2.09-.98 3.92-.98 1.82 0 2.347.98 3.93.95 1.618-.03 2.654-1.47 3.652-2.922 1.153-1.688 1.63-3.32 1.66-3.41-.03-.01-3.178-1.22-3.21-4.82-.03-3.02 2.47-4.47 2.58-4.54-1.42-2.08-3.6-2.31-4.38-2.36-2.062-.167-3.24 1.078-4.09 1.078zM16.14 3.75c.828-1.006 1.386-2.41 1.233-3.812-1.2.05-2.656.8-3.518 1.802-.74.85-1.39 2.27-1.216 3.655 1.34.1 2.7-.66 3.5-1.645z" />
                       </svg>
-                      <span>Sign up with Apple</span>
+                      <span>{t.auth.withApple}</span>
                     </button>
 
                     <button
@@ -259,7 +304,7 @@ const Header: React.FC = () => {
                       <svg className="h-5 w-5 fill-current shrink-0" viewBox="0 0 24 24">
                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                       </svg>
-                      <span>Sign up with Facebook</span>
+                      <span>{t.auth.withFacebook}</span>
                     </button>
 
                     <button
@@ -272,7 +317,7 @@ const Header: React.FC = () => {
                         <path fill="#FBBC05" d="M5.24 10.55c-.23-.7-.36-1.45-.36-2.22s.13-1.52.36-2.22L1.39 3.12C.5 4.9.01 6.89.01 9c0 2.11.49 4.1 1.38 5.88l3.85-3.33z" />
                         <path fill="#34A853" d="M12 17.5c-3.36 0-5.86-1.8-6.76-4.5L1.39 15.99c1.98 3.89 5.96 6.56 10.61 6.56 3 0 5.83-1.04 8.01-2.83l-3.66-2.84c-1.18.79-2.69 1.28-4.36 1.28z" />
                       </svg>
-                      <span>Sign up with Google</span>
+                      <span>{t.auth.withGoogle}</span>
                     </button>
 
                     <button
@@ -280,23 +325,23 @@ const Header: React.FC = () => {
                       className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 text-sm font-semibold rounded-lg border border-neutral-200/60 transition-colors cursor-pointer"
                     >
                       <Mail className="h-5 w-5 text-neutral-600 shrink-0" />
-                      <span>Register with email and password</span>
+                      <span>{t.auth.regWithEmail}</span>
                     </button>
 
                     <div className="text-xs text-neutral-500 mt-4">
-                      Already have an account?{" "}
+                      {t.auth.haveAccount}{" "}
                       <span onClick={() => { setAuthMode("signin"); setAuthMethod("list"); }} className="text-brand-red hover:text-brand-red/90 cursor-pointer hover:underline font-bold">
-                        Sign in
+                        {t.auth.loginLink}
                       </span>
                     </div>
                   </div>
                 ) : (
                   /* View 4: Register Email Input Form */
                   <form onSubmit={handleRegisterSubmit} className="flex flex-col gap-4 text-left">
-                    <h2 className="text-lg font-bold text-brand-dark text-center mb-2">Register with email and password</h2>
+                    <h2 className="text-lg font-bold text-brand-dark text-center mb-2">{t.auth.regWithEmail}</h2>
                     
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-neutral-500">Full Name</label>
+                      <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.nameLabel}</label>
                       <Input
                         type="text"
                         placeholder="John Doe"
@@ -308,7 +353,7 @@ const Header: React.FC = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-neutral-500">Email Address</label>
+                      <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.emailLabel}</label>
                       <Input
                         type="email"
                         placeholder="name@example.com"
@@ -320,7 +365,7 @@ const Header: React.FC = () => {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-neutral-500">Password</label>
+                      <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.passwordLabel}</label>
                       <Input
                         type="password"
                         placeholder="••••••••"
@@ -332,11 +377,11 @@ const Header: React.FC = () => {
                     </div>
 
                     <Button type="submit" className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg">
-                      Register
+                      {t.auth.registerBtn}
                     </Button>
 
                     <button type="button" onClick={() => setAuthMethod("list")} className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer">
-                      Back to options
+                      {t.auth.backBtn}
                     </button>
                   </form>
                 )

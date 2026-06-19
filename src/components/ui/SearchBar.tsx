@@ -6,8 +6,10 @@ import Link from "next/link"
 import { mockArticles } from "@/lib/mockData"
 import { Article } from "@/lib/types"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "@/lib/useTranslation"
 
 const SearchBar: React.FC = () => {
+  const { t, lang } = useTranslation()
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<Article[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -56,7 +58,7 @@ const SearchBar: React.FC = () => {
             setIsOpen(true)
           }}
           onFocus={() => setIsOpen(true)}
-          placeholder="Search sports news..."
+          placeholder={t.common.searchPlaceholder}
           className="w-full bg-neutral-100 hover:bg-neutral-200/70 focus:bg-white text-brand-dark placeholder:text-neutral-500 rounded-full py-1.5 pl-4 pr-10 text-sm border-0 focus:outline-none focus:ring-1 focus:ring-brand-red transition-all"
         />
         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -81,17 +83,17 @@ const SearchBar: React.FC = () => {
           {loading ? (
             <div className="flex items-center justify-center p-4 text-neutral-500 gap-2">
               <Loader2 className="h-4 w-4 animate-spin text-brand-red" />
-              <span className="text-xs">Searching...</span>
+              <span className="text-xs">{lang === "it" ? "Ricerca in corso..." : "Searching..."}</span>
             </div>
           ) : results.length > 0 ? (
             <div className="py-2">
               <div className="px-3 py-1 text-[10px] font-bold text-neutral-400 uppercase border-b border-neutral-100">
-                Articles Found ({results.length})
+                {lang === "it" ? "Articoli Trovati" : "Articles Found"} ({results.length})
               </div>
               {results.map((article) => (
                 <Link
                   key={article.id}
-                  href={`/article/${article.slug}`}
+                  href={`/${lang}/article/${article.slug}`}
                   onClick={() => setIsOpen(false)}
                   className="flex flex-col px-3 py-2 hover:bg-neutral-50 transition-colors border-b border-neutral-50 last:border-b-0"
                 >
@@ -106,7 +108,7 @@ const SearchBar: React.FC = () => {
             </div>
           ) : (
             <div className="p-4 text-center text-xs text-neutral-500">
-              No results found for "{query}"
+              {lang === "it" ? "Nessun risultato trovato per" : "No results found for"} "{query}"
             </div>
           )}
         </div>
