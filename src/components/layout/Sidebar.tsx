@@ -5,7 +5,6 @@ import Link from "next/link"
 import { getLocalArticles } from "@/lib/localizer"
 import Input from "../ui/Input"
 import Button from "../ui/Button"
-import { formatShortDate } from "@/lib/utils"
 import { useTranslation } from "@/lib/useTranslation"
 
 const Sidebar: React.FC = () => {
