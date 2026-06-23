@@ -1,8 +1,10 @@
 "use client"
 import React, { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { Menu, User, Mail } from "lucide-react"
+import logoImg from "@/assets/logo.png"
 import SearchBar from "../ui/SearchBar"
 import Button from "../ui/Button"
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "../ui/Sheet"
@@ -106,9 +108,15 @@ const Header: React.FC = () => {
             <SheetContent side="left">
               <SheetHeader>
                 <SheetTitle>
-                  <span className="font-headline text-3xl font-bold tracking-tight text-brand-red">
-                    ⚽ SportsPulse
-                  </span>
+                  <div className="flex items-center">
+                    <Image
+                      src={logoImg}
+                      alt="La Tribuna Sportiva"
+                      height={40}
+                      className="h-10 w-auto object-contain"
+                      priority
+                    />
+                  </div>
                 </SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-4 mt-6">
@@ -127,10 +135,14 @@ const Header: React.FC = () => {
         </div>
 
         {/* Logo */}
-        <Link href={`/${lang}`} className="flex items-center gap-1.5">
-          <span className="font-headline text-3xl md:text-4xl font-extrabold tracking-tight text-brand-red uppercase">
-            ⚽ SportsPulse
-          </span>
+        <Link href={`/${lang}`} className="flex items-center">
+          <Image
+            src={logoImg}
+            alt="La Tribuna Sportiva"
+            height={500}
+            className="h-12 md:h-20 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Right Section: Search, Language picker & Login */}
@@ -182,10 +194,13 @@ const Header: React.FC = () => {
 
             <DialogContent className="sm:max-w-sm bg-white border border-neutral-200 text-brand-dark p-8">
               {/* SportsPulse logo centered */}
-              <div className="flex items-center justify-center gap-1.5 mb-8 select-none">
-                <span className="font-headline text-3xl font-extrabold tracking-tight text-brand-red uppercase">
-                  ⚽ SportsPulse
-                </span>
+              <div className="flex items-center justify-center mb-8 select-none">
+                <Image
+                  src={logoImg}
+                  alt="La Tribuna Sportiva"
+                  height={60}
+                  className="h-60 w-auto object-contain"
+                />
               </div>
 
               {/* Views */}
