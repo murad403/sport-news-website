@@ -53,7 +53,6 @@ export const translations = {
       f1: "F1",
       playerUpdates: "Aggiornamenti Giocatori",
       statistics: "Statistiche",
-      sponsors: "Sponsor",
       community: "Community",
       aboutUs: "Chi Siamo",
       contact: "Contatti"
@@ -114,15 +113,6 @@ export const translations = {
         return: "Rientro"
       }
     },
-    sponsors: {
-      title: "I Nostri Sponsor & Offerte Partner",
-      subtitle: "Sostieni SportsPulse collaborando con i nostri marchi ufficiali.",
-      becomePartner: "Diventa un Partner Oggi",
-      advertisingPackages: "Pacchetti Pubblicitari",
-      choosePackage: "Scegli il pacchetto di visibilità più adatto ai tuoi obiettivi aziendali e al tuo budget.",
-      popular: "Più Popolare",
-      visitWebsite: "Visita il Sito Ufficiale"
-    },
     contact: {
       title: "Ufficio Contatti SportsPulse",
       subtitle: "Mettiti in contatto con la nostra redazione e il supporto tecnico.",
@@ -138,8 +128,7 @@ export const translations = {
       successDetail: "Grazie per averci contattato. Ti risponderemo al più presto.",
       faq: [
         { q: "Come posso inviare un articolo per la Community?", a: "Accedi al tuo account e clicca sul pulsante 'Scrivi Articolo' nella sezione Community." },
-        { q: "Come vengono aggiornati i risultati delle partite?", a: "I nostri dati in tempo reale vengono aggiornati automaticamente ogni 30 secondi tramite i nostri feed partner." },
-        { q: "Quali sono le opportunità di partnership disponibili?", a: "Consulta la nostra pagina Sponsor o inviaci un messaggio tramite il form specificando l'oggetto 'Partnership'." }
+        { q: "Come vengono aggiornati i risultati delle partite?", a: "I nostri dati in tempo reale vengono aggiornati automaticamente ogni 30 secondi tramite i nostri feed partner." }
       ]
     },
     community: {
@@ -218,7 +207,6 @@ export const translations = {
       f1: "F1",
       playerUpdates: "Player Updates",
       statistics: "Statistics",
-      sponsors: "Sponsors",
       community: "Community",
       aboutUs: "About Us",
       contact: "Contact"
@@ -279,15 +267,6 @@ export const translations = {
         return: "Expected Return"
       }
     },
-    sponsors: {
-      title: "Sponsors & Partner Deals",
-      subtitle: "Support SportsPulse by checking out our official brand partners.",
-      becomePartner: "Become a Partner Today",
-      advertisingPackages: "Advertising Packages",
-      choosePackage: "Choose the visibility package that matches your business goal and budget.",
-      popular: "Most Popular",
-      visitWebsite: "Visit Partner Site"
-    },
     contact: {
       title: "SportsPulse Contact Desk",
       subtitle: "Get in touch with our editorial newsroom and technical support desk.",
@@ -303,8 +282,7 @@ export const translations = {
       successDetail: "Thank you for contacting us. We will get back to you shortly.",
       faq: [
         { q: "How can I submit a community article?", a: "Sign in to your account and click the 'Write Article' button in the Community section." },
-        { q: "How often are scores updated?", a: "Our live data is updated automatically every 30 seconds from our partner soccer feeds." },
-        { q: "What advertising options are available?", a: "Please see our Sponsors page or send us a message using the partnership subject option." }
+        { q: "How often are scores updated?", a: "Our live data is updated automatically every 30 seconds from our partner soccer feeds." }
       ]
     },
     community: {

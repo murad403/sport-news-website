@@ -108,7 +108,6 @@ const Footer: React.FC = () => {
             <Link href={`/${lang}/soccer-results`} className="hover:text-brand-red transition-colors">{t.navigation.soccerResults === "Risultati Calcio" ? "Risultati" : "Results"}</Link>
             <Link href={`/${lang}/statistics`} className="hover:text-brand-red transition-colors">{t.navigation.statistics}</Link>
             <Link href={`/${lang}/player-updates`} className="hover:text-brand-red transition-colors">{t.navigation.playerUpdates === "Aggiornamenti Giocatori" ? "Giocatori" : "Players"}</Link>
-            <Link href={`/${lang}/sponsors`} className="hover:text-brand-red transition-colors">{t.navigation.sponsors}</Link>
             <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{t.navigation.aboutUs}</Link>
           </div>
         </div>

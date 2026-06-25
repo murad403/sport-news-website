@@ -28,7 +28,6 @@ const Navigation: React.FC = () => {
     { label: t.navigation.f1, href: `/${lang}/categories/F1` },
     { label: t.navigation.playerUpdates, href: `/${lang}/player-updates` },
     { label: t.navigation.statistics, href: `/${lang}/statistics` },
-    { label: t.navigation.sponsors, href: `/${lang}/sponsors` },
     { label: t.navigation.community, href: `/${lang}/community` }
   ]
 

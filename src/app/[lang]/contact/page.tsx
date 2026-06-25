@@ -112,8 +112,6 @@ export default function ContactPage() {
                   <SelectContent>
                     <SelectItem value="General">{isIt ? "Richiesta Generale" : "General Inquiry"}</SelectItem>
                     <SelectItem value="Press">{isIt ? "Stampa & Redazione" : "Press & Editorial"}</SelectItem>
-                    <SelectItem value="Advertising">{isIt ? "Pubblicità & Sponsorizzazioni" : "Advertising & Placement"}</SelectItem>
-                    <SelectItem value="Partnership">{isIt ? "Opportunità di Partnership" : "Partnership Opportunities"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
