@@ -25,6 +25,15 @@ const authApi = baseApi.injectEndpoints({
                 }
             }
         }),
+        signUp: builder.mutation({
+            query: (data) => {
+                return {
+                    url: "/auth/signup/",
+                    method: "POST",
+                    body: data
+                }
+            }
+        }),
         sendOtp: builder.mutation<SendOtpResponse, SendOtpRequest>({
             query: (data) => {
                 return {
