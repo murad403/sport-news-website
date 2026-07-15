@@ -12,7 +12,7 @@ const LiveScoresBar: React.FC = () => {
 
   return (
     <div className="bg-neutral-100 border-y border-neutral-200 select-none py-3 shadow-inner">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between gap-4">
+      <div className="max-w-5xl mx-auto px-4 flex items-center justify-between gap-4">
         
         {/* Horizontal scroll track */}
         <div className="flex items-center gap-4 overflow-x-auto no-scrollbar md:custom-scrollbar pb-2 w-full">

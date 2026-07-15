@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-brand-dark text-white border-t-4 border-brand-red select-none">
       {/* Upper Content */}
-      <div className="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
 
         {/* Column 1: Brand Info */}
         <div className="flex flex-col gap-4">
@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
 
       {/* Lower Bar */}
       <div className="bg-black/40 py-4 text-center border-t border-neutral-900 text-[10px] text-neutral-500">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
             © {new Date().getFullYear()} SportsPulse. {t.common.allRightsReserved}
           </span>
