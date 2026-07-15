@@ -24,7 +24,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   // Generate page numbers to display
   const getPageNumbers = () => {
     const pages: (number | string)[] = []
-    const range = 1 // number of pages to show on either side of current page
+    const range = 1
 
     pages.push(1)
 
