@@ -7,63 +7,57 @@ import { Dialog, DialogContent } from "../ui/Dialog"
 import Button from "../ui/Button"
 import Input from "../ui/Input"
 import { useTranslation } from "@/lib/useTranslation"
-import { useVerifyOtpMutation } from "@/redux/features/auth/auth.api"
+import { useSendOtpMutation } from "@/redux/features/auth/auth.api"
 
-interface VerifyOtpModalProps {
+interface SendOtpModalProps {
   isOpen: boolean
-  email: string
   onClose: () => void
-  onSuccess: () => void
-  purpose?: "signup" | "reset_password"
+  onSuccess: (email: string) => void
+  lang?: string
 }
 
-const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
+const SendOtpModal: React.FC<SendOtpModalProps> = ({
   isOpen,
-  email,
   onClose,
   onSuccess,
-  purpose = "signup"
+  lang = "it"
 }) => {
   const { t } = useTranslation()
-  const [otp, setOtp] = useState("")
+  const [email, setEmail] = useState("")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  
-  const [verifyOtp, { isLoading }] = useVerifyOtpMutation()
+
+  const [sendOtp, { isLoading }] = useSendOtpMutation()
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setOtp("")
+      setEmail("")
       setErrorMessage(null)
     }
   }, [isOpen])
 
-  const handleVerifySubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMessage(null)
 
-    if (otp.length !== 6) {
-      setErrorMessage((t.auth.otpLabel || "OTP Code") + " must be 6 digits.")
-      return
-    }
+    if (!email) return
 
     try {
-      await verifyOtp({
+      await sendOtp({
         email,
-        otp,
-        purpose
+        purpose: "reset_password"
       }).unwrap()
-      
-      onSuccess()
+
+      onSuccess(email)
     } catch (err: any) {
-      console.error("OTP Verification Error:", err)
-      const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "OTP verification failed. Please try again."
+      console.error("Send OTP Error:", err)
+      const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Failed to send verification code. Please try again."
       setErrorMessage(apiErrorMsg)
     }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isLoading) onClose(); }}>
       <DialogContent className="sm:max-w-sm bg-white border border-neutral-200 text-brand-dark p-8">
         {/* SportsPulse logo centered */}
         <div className="flex items-center justify-center mb-8 select-none">
@@ -76,25 +70,24 @@ const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
           />
         </div>
 
-        <form onSubmit={handleVerifySubmit} className="flex flex-col gap-4 text-left">
-          <h2 className="text-xl font-bold text-brand-dark text-center">{t.auth.otpTitle}</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
+          <h2 className="text-xl font-bold text-brand-dark text-center">
+            {lang === "it" ? "Password dimenticata" : "Forgot Password"}
+          </h2>
           <p className="text-xs text-neutral-500 text-center -mt-2">
-            {t.auth.otpSubtitle} <strong className="text-neutral-700">{email}</strong>
+            {lang === "it" 
+              ? "Inserisci la tua email per ricevere un codice di verifica a 6 cifre." 
+              : "Enter your email address to receive a 6-digit verification code."}
           </p>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.otpLabel}</label>
+            <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.emailLabel}</label>
             <Input
-              type="text"
-              maxLength={6}
-              placeholder={t.auth.otpPlaceholder}
-              value={otp}
-              onChange={(e) => {
-                // Only allow numbers and max length 6
-                const val = e.target.value.replace(/\D/g, "")
-                setOtp(val)
-              }}
-              className="bg-white border-neutral-250 text-brand-dark text-center tracking-[0.5em] text-lg font-bold placeholder:text-neutral-350 focus-visible:ring-brand-red rounded-lg"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
               required
               disabled={isLoading}
             />
@@ -111,7 +104,9 @@ const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
             className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg cursor-pointer"
             disabled={isLoading}
           >
-            {isLoading ? "Verifying..." : t.auth.verifyBtn}
+            {isLoading 
+              ? (lang === "it" ? "Invio in corso..." : "Sending...") 
+              : (lang === "it" ? "Invia Codice" : "Send Code")}
           </Button>
 
           <button 
@@ -128,4 +123,4 @@ const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
   )
 }
 
-export default VerifyOtpModal
+export default SendOtpModal

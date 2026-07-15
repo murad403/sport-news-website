@@ -5,7 +5,7 @@ import logoImg from "@/assets/logo.png"
 import { Dialog, DialogContent } from "../ui/Dialog"
 import Button from "../ui/Button"
 import Input from "../ui/Input"
-import { Mail } from "lucide-react"
+import { Mail, Eye, EyeOff } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import { useSignUpMutation } from "@/redux/features/auth/auth.api"
 
@@ -27,6 +27,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const [signUp, { isLoading }] = useSignUpMutation()
@@ -38,6 +39,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
             setName("")
             setEmail("")
             setPassword("")
+            setShowPassword(false)
             setErrorMessage(null)
         }
     }, [isOpen])
@@ -137,15 +139,25 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 
                         <div className="space-y-1">
                             <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.passwordLabel}</label>
-                            <Input
-                                type="password"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
-                                required
-                                disabled={isLoading}
-                            />
+                            <div className="relative flex items-center">
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg pr-10"
+                                    required
+                                    disabled={isLoading}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 text-neutral-500 hover:text-neutral-700 cursor-pointer select-none"
+                                    disabled={isLoading}
+                                >
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                            </div>
                         </div>
 
                         {errorMessage && (

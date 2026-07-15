@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils"
 import SignInModal from "@/components/modal/SignInModal"
 import SignUpModal from "@/components/modal/SignUpModal"
 import VerifyOtpModal from "@/components/modal/VerifyOtpModal"
+import SendOtpModal from "@/components/modal/SendOtpModal"
+import ResetPasswordModal from "@/components/modal/ResetPasswordModal"
 import { getCurrentUser, removeToken } from "@/lib/auth"
 
 const Header: React.FC = () => {
@@ -24,7 +26,10 @@ const Header: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false)
   const [showSignUp, setShowSignUp] = useState(false)
   const [showVerifyOtp, setShowVerifyOtp] = useState(false)
+  const [showSendOtp, setShowSendOtp] = useState(false)
+  const [showResetPassword, setShowResetPassword] = useState(false)
   const [otpEmail, setOtpEmail] = useState("")
+  const [otpPurpose, setOtpPurpose] = useState<"signup" | "reset_password">("signup")
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -182,7 +187,12 @@ const Header: React.FC = () => {
               setShowSignIn(false)
               setShowSignUp(true)
             }}
+            onForgotPassword={() => {
+              setShowSignIn(false)
+              setShowSendOtp(true)
+            }}
             initialEmail={otpEmail}
+            lang={lang}
           />
 
           <SignUpModal
@@ -190,6 +200,7 @@ const Header: React.FC = () => {
             onClose={() => setShowSignUp(false)}
             onSuccess={(email) => {
               setOtpEmail(email)
+              setOtpPurpose("signup")
               setShowSignUp(false)
               setShowVerifyOtp(true)
             }}
@@ -199,14 +210,42 @@ const Header: React.FC = () => {
             }}
           />
 
+          <SendOtpModal
+            isOpen={showSendOtp}
+            onClose={() => setShowSendOtp(false)}
+            onSuccess={(email) => {
+              setOtpEmail(email)
+              setOtpPurpose("reset_password")
+              setShowSendOtp(false)
+              setShowVerifyOtp(true)
+            }}
+            lang={lang}
+          />
+
           <VerifyOtpModal
             isOpen={showVerifyOtp}
             email={otpEmail}
+            purpose={otpPurpose}
             onClose={() => setShowVerifyOtp(false)}
             onSuccess={() => {
               setShowVerifyOtp(false)
+              if (otpPurpose === "reset_password") {
+                setShowResetPassword(true)
+              } else {
+                setShowSignIn(true)
+              }
+            }}
+          />
+
+          <ResetPasswordModal
+            isOpen={showResetPassword}
+            email={otpEmail}
+            onClose={() => setShowResetPassword(false)}
+            onSuccess={() => {
+              setShowResetPassword(false)
               setShowSignIn(true)
             }}
+            lang={lang}
           />
         </div>
       </div>

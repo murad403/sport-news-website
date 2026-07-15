@@ -6,7 +6,7 @@ import logoImg from "@/assets/logo.png"
 import { Dialog, DialogContent } from "../ui/Dialog"
 import Button from "../ui/Button"
 import Input from "../ui/Input"
-import { Mail } from "lucide-react"
+import { Mail, Eye, EyeOff } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import { useSignInMutation } from "@/redux/features/auth/auth.api"
 import { saveToken } from "@/lib/auth"
@@ -16,7 +16,9 @@ interface SignInModalProps {
   onClose: () => void
   onSuccess: () => void
   onSwitchToSignUp: () => void
+  onForgotPassword: () => void
   initialEmail?: string
+  lang?: string
 }
 
 const SignInModal: React.FC<SignInModalProps> = ({
@@ -24,12 +26,15 @@ const SignInModal: React.FC<SignInModalProps> = ({
   onClose,
   onSuccess,
   onSwitchToSignUp,
-  initialEmail = ""
+  onForgotPassword,
+  initialEmail = "",
+  lang = "it"
 }) => {
   const { t } = useTranslation()
   const [authMethod, setAuthMethod] = useState<"list" | "email">("list")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const [signIn, { isLoading }] = useSignInMutation()
@@ -40,11 +45,13 @@ const SignInModal: React.FC<SignInModalProps> = ({
       setAuthMethod("list")
       setEmail("")
       setPassword("")
+      setShowPassword(false)
       setErrorMessage(null)
     } else if (initialEmail) {
       setAuthMethod("email")
       setEmail(initialEmail)
       setPassword("")
+      setShowPassword(false)
       setErrorMessage(null)
     }
   }, [isOpen, initialEmail])
@@ -131,17 +138,37 @@ const SignInModal: React.FC<SignInModalProps> = ({
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.passwordLabel}</label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
-                required
-                disabled={isLoading}
-              />
+             <div className="space-y-1">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.passwordLabel}</label>
+                <button
+                  type="button"
+                  onClick={onForgotPassword}
+                  className="text-[10px] font-bold text-neutral-400 hover:text-brand-red cursor-pointer hover:underline"
+                  disabled={isLoading}
+                >
+                  {lang === "it" ? "Password dimenticata?" : "Forgot Password?"}
+                </button>
+              </div>
+              <div className="relative flex items-center">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg pr-10"
+                  required
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 text-neutral-500 hover:text-neutral-700 cursor-pointer select-none"
+                  disabled={isLoading}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
 
             {errorMessage && (
