@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
 import CategoryBadge from "@/components/ui/CategoryBadge"
 import AddArticleModal from "@/components/modal/AddArticleModal"
+import ViewArticleModal from "@/components/modal/ViewArticleModal"
 import CustomPagination from "@/components/shared/CustomPagination"
 import { useGetMineArticlesQuery, useDeleteArticleMutation } from "@/redux/features/article/article.api"
 import { cn } from "@/lib/utils"
@@ -24,6 +25,8 @@ export default function MyArticlesPage() {
   const [searchText, setSearchText] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedArticleSlug, setSelectedArticleSlug] = useState<string | null>(null)
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false)
 
   // Debounce search text
   useEffect(() => {
@@ -123,92 +126,100 @@ export default function MyArticlesPage() {
         </div>
       ) : (
         /* Articles List Grid */
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
           {articles.map((article) => {
             const dateStr = article.created_at
               ? new Date(article.created_at).toLocaleDateString(isIt ? "it-IT" : "en-US", {
                   year: "numeric",
                   month: "short",
-                  day: "numeric"
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit"
                 })
               : ""
 
             return (
               <div
                 key={article.id}
-                className="flex flex-col sm:flex-row gap-4 bg-white border border-neutral-200 hover:border-neutral-300 transition-colors p-4 rounded-xl shadow-xs"
+                className="bg-white border border-neutral-200 hover:border-neutral-300 transition-colors p-4 md:p-5 rounded-xl shadow-xs flex flex-col"
               >
-                {/* Display Image thumbnail */}
-                <div className="w-full sm:w-36 h-28 relative rounded-lg overflow-hidden border border-neutral-100 bg-neutral-50 shrink-0">
-                  {article.display_image ? (
+                {/* Top header row */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    {/* Avatar circle containing first letter of author */}
+                    <div className="h-8 w-8 rounded-full border border-brand-red flex items-center justify-center text-brand-red font-bold text-xs bg-white shrink-0">
+                      {article.author_name ? article.author_name.charAt(0).toUpperCase() : "U"}
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-brand-dark leading-tight">{article.author_name}</h4>
+                      <span className="text-[9px] text-neutral-405 font-bold uppercase">
+                        {dateStr}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-1.5">
+                    {/* Status badge */}
+                    <span
+                      className={cn(
+                        "inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wide border",
+                        {
+                          "bg-amber-50 text-amber-700 border-amber-200": article.status === "pending",
+                          "bg-emerald-50 text-emerald-700 border-emerald-200": article.status === "approved" || article.status === "published",
+                          "bg-rose-50 text-rose-700 border-rose-250": article.status === "rejected"
+                        }
+                      )}
+                    >
+                      {article.status}
+                    </span>
+                    {article.categories?.[0] && (
+                      <CategoryBadge category={article.categories[0].name} />
+                    )}
+                  </div>
+                </div>
+
+                {/* Display Image banner */}
+                {article.display_image && (
+                  <div className="w-full h-40 md:h-52 relative rounded-xl overflow-hidden border border-neutral-100 bg-neutral-50 mb-3 shrink-0">
                     <img
                       src={article.display_image}
                       alt={article.title}
                       className="w-full h-full object-cover"
                     />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-neutral-300">
-                      <FileText className="h-8 w-8" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Article Info Details */}
-                <div className="grow flex flex-col justify-between gap-2 min-w-0">
-                  <div>
-                    <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                      {article.categories?.[0] && (
-                        <CategoryBadge category={article.categories[0].name} />
-                      )}
-                      
-                      {/* Status badge */}
-                      <span
-                        className={cn(
-                          "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border",
-                          {
-                            "bg-amber-50 text-amber-700 border-amber-200": article.status === "pending",
-                            "bg-emerald-50 text-emerald-700 border-emerald-200": article.status === "approved" || article.status === "published",
-                            "bg-rose-50 text-rose-700 border-rose-250": article.status === "rejected"
-                          }
-                        )}
-                      >
-                        {article.status}
-                      </span>
-                    </div>
-
-                    <h3 className="text-sm font-bold text-brand-dark hover:text-brand-red transition-colors line-clamp-1 mb-1">
-                      {article.title}
-                    </h3>
-                    
-                    <p className="text-xs text-neutral-500 line-clamp-2 leading-relaxed">
-                      {article.description || article.content}
-                    </p>
                   </div>
+                )}
 
-                  <div className="flex items-center justify-between pt-2 border-t border-neutral-100 mt-1">
-                    <div className="flex items-center gap-3 text-[10px] text-neutral-400 font-bold uppercase">
-                      <span className="flex items-center gap-1">
-                        <User className="h-3.5 w-3.5 text-neutral-300" />
-                        {article.author_name}
-                      </span>
-                      {dateStr && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3.5 w-3.5 text-neutral-300" />
-                          {dateStr}
-                        </span>
-                      )}
-                    </div>
+                {/* Title */}
+                <h3 className="font-headline text-base md:text-lg font-extrabold text-brand-dark mb-1.5 uppercase leading-snug">
+                  {article.title}
+                </h3>
 
-                    {/* Delete button */}
-                    <button
-                      disabled={isDeleting}
-                      onClick={() => handleDelete(article.id)}
-                      className="text-neutral-400 hover:text-brand-red p-1 transition-colors hover:bg-neutral-50 rounded-lg cursor-pointer"
-                      title={isIt ? "Elimina articolo" : "Delete article"}
-                    >
-                      <Trash2 className="h-4.5 w-4.5" />
-                    </button>
-                  </div>
+                {/* Content */}
+                <p className="text-xs text-neutral-600 mb-4 leading-relaxed whitespace-pre-line line-clamp-2">
+                  {article.description || article.content}
+                </p>
+
+                {/* Bottom Action Footer */}
+                <div className="flex items-center justify-between pt-3 border-t border-neutral-100 mt-2">
+                  <button
+                    onClick={() => {
+                      setSelectedArticleSlug(article.slug)
+                      setIsViewModalOpen(true)
+                    }}
+                    className="text-xs font-bold text-brand-red hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    {isIt ? "Visualizza Articolo" : "View Article"}
+                  </button>
+
+                  <button
+                    disabled={isDeleting}
+                    onClick={() => handleDelete(article.id)}
+                    className="text-neutral-400 hover:text-brand-red p-1 transition-colors hover:bg-neutral-50 rounded-lg cursor-pointer flex items-center gap-1 text-xs font-bold"
+                    title={isIt ? "Elimina articolo" : "Delete article"}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {isIt ? "Elimina" : "Delete"}
+                  </button>
                 </div>
               </div>
             )
@@ -232,6 +243,17 @@ export default function MyArticlesPage() {
           setIsModalOpen(false)
           refetch()
         }}
+        lang={lang}
+      />
+
+      {/* View Article Modal */}
+      <ViewArticleModal
+        isOpen={isViewModalOpen}
+        onClose={() => {
+          setIsViewModalOpen(false)
+          setSelectedArticleSlug(null)
+        }}
+        slug={selectedArticleSlug}
         lang={lang}
       />
     </div>
