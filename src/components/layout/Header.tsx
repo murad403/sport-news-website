@@ -44,6 +44,9 @@ const Header: React.FC = () => {
   const handleLogout = async () => {
     await removeToken()
     setIsLoggedIn(false)
+    if (pathname.includes("/profile")) {
+      router.push(`/${lang}`)
+    }
   }
 
   const handleLanguageChange = (newLang: "it" | "en") => {

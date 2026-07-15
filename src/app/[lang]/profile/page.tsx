@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useGetProfileQuery, useUpdateProfileMutation } from "@/redux/features/auth/auth.api"
 import { useTranslation } from "@/lib/useTranslation"
+import { useRouter } from "next/navigation"
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
 import { Camera, User, Loader2 } from "lucide-react"
@@ -19,6 +20,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>
 
 export default function ProfilePage() {
   const { lang } = useTranslation()
+  const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
@@ -27,6 +29,12 @@ export default function ProfilePage() {
 
   const { data: user, isLoading: isProfileLoading, error: profileError } = useGetProfileQuery()
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation()
+
+  useEffect(() => {
+    if (profileError) {
+      router.push(`/${lang}`)
+    }
+  }, [profileError, lang, router])
 
   const {
     register,
@@ -63,6 +71,7 @@ export default function ProfilePage() {
   }
 
   const onSubmit = async (data: ProfileFormValues) => {
+    if (!isEditing) return
     setErrorMessage(null)
     setSuccessMessage(null)
 
@@ -219,7 +228,7 @@ export default function ProfilePage() {
         {/* Actions buttons */}
         <div className="flex gap-3 pt-2">
           {isEditing ? (
-            <>
+            <div key="editing-buttons" className="flex gap-3">
               <Button
                 type="submit"
                 className="bg-brand-red hover:bg-brand-red/90 text-white rounded-lg px-4 py-2 font-bold cursor-pointer"
@@ -231,7 +240,9 @@ export default function ProfilePage() {
                 type="button"
                 variant="outline"
                 className="rounded-lg px-4 py-2 font-bold cursor-pointer"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
                   setIsEditing(false)
                   reset({
                     name: user.name,
@@ -245,19 +256,23 @@ export default function ProfilePage() {
               >
                 {lang === "it" ? "Annulla" : "Cancel"}
               </Button>
-            </>
+            </div>
           ) : (
-            <Button
-              type="button"
-              className="bg-neutral-800 hover:bg-neutral-900 text-white rounded-lg px-4 py-2 font-bold cursor-pointer"
-              onClick={() => {
-                setIsEditing(true)
-                setSuccessMessage(null)
-                setErrorMessage(null)
-              }}
-            >
-              {lang === "it" ? "Modifica Profilo" : "Edit Profile"}
-            </Button>
+            <div key="viewing-buttons">
+              <Button
+                type="button"
+                className="bg-neutral-800 hover:bg-neutral-900 text-white rounded-lg px-4 py-2 font-bold cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setIsEditing(true)
+                  setSuccessMessage(null)
+                  setErrorMessage(null)
+                }}
+              >
+                {lang === "it" ? "Modifica Profilo" : "Edit Profile"}
+              </Button>
+            </div>
           )}
         </div>
       </form>

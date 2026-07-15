@@ -23,7 +23,19 @@ export function proxy(request: NextRequest) {
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   )
 
-  if (pathnameHasLocale) return
+  if (pathnameHasLocale) {
+    // Auth protection for profile routes
+    const pathParts = pathname.split("/").filter(Boolean)
+    if (pathParts[1] === "profile") {
+      const token = request.cookies.get("access")?.value
+      if (!token) {
+        const locale = pathParts[0] || defaultLocale
+        const homeUrl = new URL(`/${locale}`, request.url)
+        return NextResponse.redirect(homeUrl)
+      }
+    }
+    return
+  }
 
   // Redirect to the default locale 'it'
   request.nextUrl.pathname = `/${defaultLocale}${pathname}`
