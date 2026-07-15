@@ -2,26 +2,26 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { getLocalArticles } from "@/lib/localizer"
 import Input from "../ui/Input"
 import Button from "../ui/Button"
 import { useTranslation } from "@/lib/useTranslation"
+import { useGetTrendingTagsQuery, useGetMostReadQuery } from "@/redux/features/news/news.api"
+import { Loader2 } from "lucide-react"
 
 const Sidebar: React.FC = () => {
   const { lang } = useTranslation()
   const isIt = lang === "it"
-  const articles = getLocalArticles(lang)
 
+  // Newsletter Signup State
   const [email, setEmail] = useState("")
   const [subscribed, setSubscribed] = useState(false)
 
-  // Get first 5 articles for "Most Read"
-  const mostReadArticles = articles.slice(0, 5)
+  // Fetch live trending tags and most read articles
+  const { data: trendingData, isLoading: isTrendingLoading } = useGetTrendingTagsQuery()
+  const { data: mostReadData, isLoading: isMostReadLoading } = useGetMostReadQuery()
 
-  // Unique tags for "Trending"
-  const trendingTags = Array.from(
-    new Set(articles.flatMap((a) => a.tags))
-  ).slice(0, 10)
+  const mostReadArticles = (mostReadData?.results || []).slice(0, 5)
+  const trendingTags = (trendingData?.results || []).slice(0, 10)
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,44 +32,59 @@ const Sidebar: React.FC = () => {
   }
 
   return (
-    <aside className="w-full flex flex-col gap-8 select-none">
+    <aside className="w-full lg:sticky lg:top-24 self-start flex flex-col gap-8 select-none">
       
       {/* 1. Most Read */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm">
         <h3 className="font-headline text-2xl font-bold uppercase text-brand-dark border-b-2 border-brand-red pb-2 mb-4">
           {isIt ? "I Più Letti" : "Most Read"}
         </h3>
-        <div className="flex flex-col gap-4">
-          {mostReadArticles.map((article, idx) => (
-            <Link
-              key={article.id}
-              href={`/${lang}/article/${article.slug}`}
-              className="flex gap-4 group"
-            >
-              {/* Number indicator */}
-              <div className="font-headline text-3xl font-extrabold text-brand-red opacity-80 group-hover:opacity-100 transition-opacity">
-                {idx + 1}
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-0.5">
-                  {article.category}
-                </span>
-                <h4 className="text-sm font-bold text-brand-dark leading-snug line-clamp-2 group-hover:text-brand-red transition-colors">
-                  {article.title}
-                </h4>
-              </div>
-            </Link>
-          ))}
-        </div>
+        
+        {isMostReadLoading ? (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-5 w-5 animate-spin text-brand-red" />
+          </div>
+        ) : mostReadArticles.length === 0 ? (
+          <p className="text-xs text-neutral-450 text-center py-4">
+            {isIt ? "Nessun articolo trovato" : "No articles found"}
+          </p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {mostReadArticles.map((article, idx) => (
+              <Link
+                key={article.id}
+                href={`/${lang}/article/${article.slug}`}
+                className="flex gap-4 group"
+              >
+                {/* Number indicator */}
+                <div className="font-headline text-3xl font-extrabold text-brand-red opacity-80 group-hover:opacity-100 transition-opacity shrink-0">
+                  {idx + 1}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-0.5 truncate">
+                    {article.category || "News"}
+                  </span>
+                  <h4 className="text-xs font-bold text-brand-dark leading-snug line-clamp-2 group-hover:text-brand-red transition-colors">
+                    {article.title}
+                  </h4>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* 2. Ad Placeholder */}
-      <div className="bg-neutral-100 border border-neutral-200 rounded-xl p-4 flex flex-col items-center justify-center text-center h-[280px]">
+      {/* 2. Advertisement */}
+      <div className="bg-white border border-neutral-200 rounded-xl p-4 flex flex-col items-center justify-center text-center shadow-sm">
         <span className="text-[10px] uppercase font-bold text-neutral-400 tracking-wider mb-2">
           {isIt ? "Spazio Pubblicitario" : "Advertisement"}
         </span>
-        <div className="w-[300px] h-[250px] bg-neutral-200 border border-neutral-300 rounded flex items-center justify-center text-sm font-semibold text-neutral-500">
-          {isIt ? "Spazio Banner 300 x 250" : "300 x 250 Banner Place"}
+        <div className="w-[300px] h-[250px] relative rounded-lg overflow-hidden border border-neutral-200 bg-neutral-50 shrink-0">
+          <img
+            src="/sports_ad_banner.png"
+            alt="Advertisement"
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
 
@@ -78,17 +93,28 @@ const Sidebar: React.FC = () => {
         <h3 className="font-headline text-2xl font-bold uppercase text-brand-dark border-b-2 border-brand-red pb-2 mb-4">
           {isIt ? "Tendenze" : "Trending"}
         </h3>
-        <div className="flex flex-wrap gap-2">
-          {trendingTags.map((tag) => (
-            <Link
-              key={tag}
-              href={`/${lang}/categories/Football`} // Direct to a category or general page
-              className="text-xs font-semibold px-2.5 py-1 bg-neutral-100 hover:bg-brand-red hover:text-white text-neutral-700 rounded transition-colors"
-            >
-              #{tag}
-            </Link>
-          ))}
-        </div>
+
+        {isTrendingLoading ? (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="h-5 w-5 animate-spin text-brand-red" />
+          </div>
+        ) : trendingTags.length === 0 ? (
+          <p className="text-xs text-neutral-450 text-center py-4">
+            {isIt ? "Nessuna tendenza trovata" : "No trending tags found"}
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {trendingTags.map((tag) => (
+              <Link
+                key={tag.id}
+                href={`/${lang}/categories/Football`} // Direct to a category or general landing page
+                className="text-xs font-semibold px-2.5 py-1 bg-neutral-100 hover:bg-brand-red hover:text-white text-neutral-700 rounded transition-colors"
+              >
+                #{tag.name}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 4. Newsletter Signup */}
@@ -96,7 +122,7 @@ const Sidebar: React.FC = () => {
         <h3 className="font-headline text-2xl font-bold uppercase text-brand-red mb-2">
           {isIt ? "Iscriviti alla Newsletter" : "Join Newsletter"}
         </h3>
-        <p className="text-xs text-neutral-300 mb-4 leading-relaxed">
+        <p className="text-xs text-neutral-300 mb-4 leading-relaxed font-semibold">
           {isIt 
             ? "Iscriviti per ricevere avvisi sulle ultime notizie, articoli esclusivi e approfondimenti inviati direttamente nella tua casella di posta."
             : "Subscribe to get breaking news alerts, exclusive features, and direct insights sent straight to your inbox."}
@@ -116,7 +142,7 @@ const Sidebar: React.FC = () => {
               className="bg-neutral-800/80 border-neutral-700 text-white placeholder:text-neutral-500 focus-visible:ring-brand-red"
               required
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full font-bold select-none cursor-pointer">
               {isIt ? "Iscriviti" : "Subscribe"}
             </Button>
           </form>
