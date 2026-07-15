@@ -9,6 +9,15 @@ import Input from "../ui/Input"
 import { Eye, EyeOff } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import { useResetPasswordMutation } from "@/redux/features/auth/auth.api"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+const resetPasswordSchema = z.object({
+  new_password: z.string().min(8, "Password must be at least 8 characters long")
+})
+
+type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
 
 interface ResetPasswordModalProps {
   isOpen: boolean
@@ -26,40 +35,45 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
   lang = "it"
 }) => {
   const { t } = useTranslation()
-  const [newPassword, setNewPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [resetPassword, { isLoading, error }] = useResetPasswordMutation()
 
-  const [resetPassword, { isLoading }] = useResetPasswordMutation()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<ResetPasswordFormValues>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      new_password: ""
+    }
+  })
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setNewPassword("")
+      reset({ new_password: "" })
       setShowPassword(false)
-      setErrorMessage(null)
     }
-  }, [isOpen])
+  }, [isOpen, reset])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setErrorMessage(null)
-
-    if (!newPassword) return
-
+  const onSubmit = async (values: ResetPasswordFormValues) => {
     try {
       await resetPassword({
         email,
-        new_password: newPassword
+        new_password: values.new_password
       }).unwrap()
 
       onSuccess()
-    } catch (err: any) {
+    } catch (err) {
       console.error("Reset Password Error:", err)
-      const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Failed to reset password. Please try again."
-      setErrorMessage(apiErrorMsg)
     }
   }
+
+  const apiErrorMsg = error
+    ? ((error as any)?.data?.message || (error as any)?.data?.detail || (error as any)?.data?.error || "Failed to reset password. Please try again.")
+    : null
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isLoading) onClose(); }}>
@@ -75,7 +89,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
           />
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-left">
           <h2 className="text-xl font-bold text-brand-dark text-center">
             {lang === "it" ? "Reimposta Password" : "Reset Password"}
           </h2>
@@ -91,11 +105,9 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg pr-10"
-                required
                 disabled={isLoading}
+                {...register("new_password")}
               />
               <button
                 type="button"
@@ -106,11 +118,14 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {errors.new_password && (
+              <span className="text-xs text-brand-red font-semibold">{errors.new_password.message}</span>
+            )}
           </div>
 
-          {errorMessage && (
+          {apiErrorMsg && (
             <div className="text-xs font-semibold text-brand-red bg-red-50 border border-red-200 rounded-lg p-2.5 text-center">
-              {errorMessage}
+              {apiErrorMsg}
             </div>
           )}
 

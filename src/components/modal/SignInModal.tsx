@@ -10,6 +10,16 @@ import { Mail, Eye, EyeOff } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import { useSignInMutation } from "@/redux/features/auth/auth.api"
 import { saveToken } from "@/lib/auth"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+const signInSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required")
+})
+
+type SignInFormValues = z.infer<typeof signInSchema>
 
 interface SignInModalProps {
   isOpen: boolean
@@ -32,46 +42,53 @@ const SignInModal: React.FC<SignInModalProps> = ({
 }) => {
   const { t } = useTranslation()
   const [authMethod, setAuthMethod] = useState<"list" | "email">("list")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const [signIn, { isLoading }] = useSignInMutation()
 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors }
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    }
+  })
+
   // Reset form when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
       setAuthMethod("list")
-      setEmail("")
-      setPassword("")
+      reset({ email: "", password: "" })
       setShowPassword(false)
       setErrorMessage(null)
     } else if (initialEmail) {
       setAuthMethod("email")
-      setEmail(initialEmail)
-      setPassword("")
+      setValue("email", initialEmail)
+      setValue("password", "")
       setShowPassword(false)
       setErrorMessage(null)
     }
-  }, [isOpen, initialEmail])
+  }, [isOpen, initialEmail, reset, setValue])
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (values: SignInFormValues) => {
     setErrorMessage(null)
-    if (email && password) {
-      try {
-        const response = await signIn({ email, password }).unwrap()
-        await saveToken(response.access, response.refresh)
-        onSuccess()
-      } catch (err: any) {
-        console.error("Sign In Error:", err)
-        const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Login failed. Please check your credentials."
-        setErrorMessage(apiErrorMsg)
-      }
+    try {
+      const response = await signIn(values).unwrap()
+      await saveToken(response.access, response.refresh)
+      onSuccess()
+    } catch (err: any) {
+      console.error("Sign In Error:", err)
+      const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Login failed. Please check your credentials."
+      setErrorMessage(apiErrorMsg)
     }
   }
-
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isLoading) onClose(); }}>
@@ -122,7 +139,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
           </div>
         ) : (
           /* View 2: Sign In Email Input Form */
-          <form onSubmit={handleLoginSubmit} className="flex flex-col gap-4 text-left">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-left">
             <h2 className="text-lg font-bold text-brand-dark text-center mb-2">{t.auth.withEmail}</h2>
 
             <div className="space-y-1">
@@ -130,12 +147,13 @@ const SignInModal: React.FC<SignInModalProps> = ({
               <Input
                 type="email"
                 placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
-                required
                 disabled={isLoading}
+                {...register("email")}
               />
+              {errors.email && (
+                <span className="text-xs text-brand-red font-semibold">{errors.email.message}</span>
+              )}
             </div>
 
              <div className="space-y-1">
@@ -154,11 +172,9 @@ const SignInModal: React.FC<SignInModalProps> = ({
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg pr-10"
-                  required
                   disabled={isLoading}
+                  {...register("password")}
                 />
                 <button
                   type="button"
@@ -169,6 +185,9 @@ const SignInModal: React.FC<SignInModalProps> = ({
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              {errors.password && (
+                <span className="text-xs text-brand-red font-semibold">{errors.password.message}</span>
+              )}
             </div>
 
             {errorMessage && (

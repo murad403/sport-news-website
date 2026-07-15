@@ -12,6 +12,7 @@ import {
   ResetPasswordResponse,
   ChangePasswordRequest,
   ChangePasswordResponse,
+  User,
 } from "./auth.type";
 
 
@@ -71,6 +72,28 @@ const authApi = baseApi.injectEndpoints({
                 }
             }
         }),
+
+
+        // profile**************************************
+        getProfile: builder.query<User, void>({
+            query: () => {
+                return {
+                    url: '/auth/profile/',
+                    method: "GET"
+                }
+            },
+            providesTags: ["Profile"]
+        }),
+        updateProfile: builder.mutation<User, FormData>({
+            query: (data) => {
+                return {
+                    url: '/auth/profile/',
+                    method: "PATCH",
+                    body: data
+                }
+            },
+            invalidatesTags: ["Profile"]
+        }),
     })
 })
 
@@ -80,5 +103,7 @@ export const {
     useSendOtpMutation,
     useVerifyOtpMutation,
     useResetPasswordMutation,
-    useChangePasswordMutation
-} = authApi;
+    useChangePasswordMutation,
+    useGetProfileQuery,
+    useUpdateProfileMutation
+} = authApi;

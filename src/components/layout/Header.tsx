@@ -159,9 +159,9 @@ const Header: React.FC = () => {
 
           {isLoggedIn ? (
             <div className="flex items-center gap-2">
-              <button className="h-9 w-9 rounded-full bg-neutral-100 border border-neutral-200 hover:bg-neutral-250 flex items-center justify-center text-brand-dark transition-colors cursor-pointer" title="Account Settings">
+              <Link href={`/${lang}/profile`} className="h-9 w-9 rounded-full bg-neutral-100 border border-neutral-200 hover:bg-neutral-250 flex items-center justify-center text-brand-dark transition-colors cursor-pointer" title="Account Settings">
                 <User className="h-5 w-5 text-neutral-600" />
-              </button>
+              </Link>
               <Button variant="outline" size="sm" onClick={handleLogout} className="rounded-full text-xs font-semibold">
                 {lang === "it" ? "Esci" : "Logout"}
               </Button>

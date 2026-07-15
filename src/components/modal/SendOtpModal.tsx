@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useEffect } from "react"
 import Image from "next/image"
 import logoImg from "@/assets/logo.png"
 import { Dialog, DialogContent } from "../ui/Dialog"
@@ -8,6 +8,15 @@ import Button from "../ui/Button"
 import Input from "../ui/Input"
 import { useTranslation } from "@/lib/useTranslation"
 import { useSendOtpMutation } from "@/redux/features/auth/auth.api"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+const sendOtpSchema = z.object({
+  email: z.string().email("Invalid email address")
+})
+
+type SendOtpFormValues = z.infer<typeof sendOtpSchema>
 
 interface SendOtpModalProps {
   isOpen: boolean
@@ -23,38 +32,43 @@ const SendOtpModal: React.FC<SendOtpModalProps> = ({
   lang = "it"
 }) => {
   const { t } = useTranslation()
-  const [email, setEmail] = useState("")
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [sendOtp, { isLoading, error }] = useSendOtpMutation()
 
-  const [sendOtp, { isLoading }] = useSendOtpMutation()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<SendOtpFormValues>({
+    resolver: zodResolver(sendOtpSchema),
+    defaultValues: {
+      email: ""
+    }
+  })
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
-      setEmail("")
-      setErrorMessage(null)
+      reset({ email: "" })
     }
-  }, [isOpen])
+  }, [isOpen, reset])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setErrorMessage(null)
-
-    if (!email) return
-
+  const onSubmit = async (values: SendOtpFormValues) => {
     try {
       await sendOtp({
-        email,
+        email: values.email,
         purpose: "reset_password"
       }).unwrap()
 
-      onSuccess(email)
-    } catch (err: any) {
+      onSuccess(values.email)
+    } catch (err) {
       console.error("Send OTP Error:", err)
-      const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Failed to send verification code. Please try again."
-      setErrorMessage(apiErrorMsg)
     }
   }
+
+  const apiErrorMsg = error
+    ? ((error as any)?.data?.message || (error as any)?.data?.detail || (error as any)?.data?.error || "Failed to send verification code. Please try again.")
+    : null
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isLoading) onClose(); }}>
@@ -70,7 +84,7 @@ const SendOtpModal: React.FC<SendOtpModalProps> = ({
           />
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-left">
           <h2 className="text-xl font-bold text-brand-dark text-center">
             {lang === "it" ? "Password dimenticata" : "Forgot Password"}
           </h2>
@@ -85,17 +99,18 @@ const SendOtpModal: React.FC<SendOtpModalProps> = ({
             <Input
               type="email"
               placeholder="name@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
-              required
               disabled={isLoading}
+              {...register("email")}
             />
+            {errors.email && (
+              <span className="text-xs text-brand-red font-semibold">{errors.email.message}</span>
+            )}
           </div>
 
-          {errorMessage && (
+          {apiErrorMsg && (
             <div className="text-xs font-semibold text-brand-red bg-red-50 border border-red-200 rounded-lg p-2.5 text-center">
-              {errorMessage}
+              {apiErrorMsg}
             </div>
           )}
 

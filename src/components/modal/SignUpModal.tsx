@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import logoImg from "@/assets/logo.png"
@@ -8,6 +9,17 @@ import Input from "../ui/Input"
 import { Mail, Eye, EyeOff } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import { useSignUpMutation } from "@/redux/features/auth/auth.api"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+
+const signUpSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters long")
+})
+
+type SignUpFormValues = z.infer<typeof signUpSchema>
 
 interface SignUpModalProps {
     isOpen: boolean
@@ -24,38 +36,48 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 }) => {
     const { t } = useTranslation()
     const [authMethod, setAuthMethod] = useState<"list" | "email">("list")
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     const [signUp, { isLoading }] = useSignUpMutation()
 
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors }
+    } = useForm<SignUpFormValues>({
+        resolver: zodResolver(signUpSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            password: ""
+        }
+    })
+
     // Reset form when modal opens/closes
     useEffect(() => {
         if (!isOpen) {
             setAuthMethod("list")
-            setName("")
-            setEmail("")
-            setPassword("")
+            reset({
+                name: "",
+                email: "",
+                password: ""
+            })
             setShowPassword(false)
             setErrorMessage(null)
         }
-    }, [isOpen])
+    }, [isOpen, reset])
 
-    const handleRegisterSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    const onSubmit = async (values: SignUpFormValues) => {
         setErrorMessage(null)
-        if (name && email && password) {
-            try {
-                await signUp({ name, email, password }).unwrap()
-                onSuccess(email)
-            } catch (err: any) {
-                console.error("Sign Up Error:", err)
-                const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Registration failed. Please try again."
-                setErrorMessage(apiErrorMsg)
-            }
+        try {
+            await signUp(values).unwrap()
+            onSuccess(values.email)
+        } catch (err: any) {
+            console.error("Sign Up Error:", err)
+            const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Registration failed. Please try again."
+            setErrorMessage(apiErrorMsg)
         }
     }
 
@@ -108,7 +130,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                     </div>
                 ) : (
                     /* View 4: Register Email Input Form */
-                    <form onSubmit={handleRegisterSubmit} className="flex flex-col gap-4 text-left">
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 text-left">
                         <h2 className="text-lg font-bold text-brand-dark text-center mb-2">{t.auth.regWithEmail}</h2>
 
                         <div className="space-y-1">
@@ -116,12 +138,13 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                             <Input
                                 type="text"
                                 placeholder="John Doe"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
                                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
-                                required
                                 disabled={isLoading}
+                                {...register("name")}
                             />
+                            {errors.name && (
+                                <span className="text-xs text-brand-red font-semibold">{errors.name.message}</span>
+                            )}
                         </div>
 
                         <div className="space-y-1">
@@ -129,12 +152,13 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                             <Input
                                 type="email"
                                 placeholder="name@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
                                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
-                                required
                                 disabled={isLoading}
+                                {...register("email")}
                             />
+                            {errors.email && (
+                                <span className="text-xs text-brand-red font-semibold">{errors.email.message}</span>
+                            )}
                         </div>
 
                         <div className="space-y-1">
@@ -143,11 +167,9 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                                 <Input
                                     type={showPassword ? "text" : "password"}
                                     placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
                                     className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg pr-10"
-                                    required
                                     disabled={isLoading}
+                                    {...register("password")}
                                 />
                                 <button
                                     type="button"
@@ -158,6 +180,9 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
                             </div>
+                            {errors.password && (
+                                <span className="text-xs text-brand-red font-semibold">{errors.password.message}</span>
+                            )}
                         </div>
 
                         {errorMessage && (
