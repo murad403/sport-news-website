@@ -1,8 +1,7 @@
 "use client"
-
 import React from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/Dialog"
-import { Calendar, User, Loader2, X } from "lucide-react"
+import { Calendar, Loader2 } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import { useGetArticleDetailsQuery } from "@/redux/features/article/article.api"
 import CategoryBadge from "../ui/CategoryBadge"
@@ -15,16 +14,9 @@ interface ViewArticleModalProps {
   lang?: string
 }
 
-const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
-  isOpen,
-  onClose,
-  slug,
-  lang = "it"
-}) => {
+const ViewArticleModal: React.FC<ViewArticleModalProps> = ({ isOpen, onClose, slug, lang = "it"}) => {
   const { t } = useTranslation()
   const isIt = lang === "it"
-
-  // Fetch article details dynamically using slug
   const { data: article, isLoading, error } = useGetArticleDetailsQuery(slug || "", {
     skip: !slug || !isOpen
   })

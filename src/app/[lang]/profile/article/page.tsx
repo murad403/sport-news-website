@@ -9,6 +9,7 @@ import Input from "@/components/ui/Input"
 import CategoryBadge from "@/components/ui/CategoryBadge"
 import AddArticleModal from "@/components/modal/AddArticleModal"
 import ViewArticleModal from "@/components/modal/ViewArticleModal"
+import DeleteConfirmationModal from "@/components/modal/DeleteConfirmationModal"
 import CustomPagination from "@/components/shared/CustomPagination"
 import { useGetMineArticlesQuery, useDeleteArticleMutation } from "@/redux/features/article/article.api"
 import { cn } from "@/lib/utils"
@@ -19,14 +20,14 @@ export default function MyArticlesPage() {
   const { lang } = useParams() as { lang: string }
   const { t } = useTranslation()
   const isIt = lang === "it"
-
-  // States
   const [currentPage, setCurrentPage] = useState(1)
   const [searchText, setSearchText] = useState("")
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedArticleSlug, setSelectedArticleSlug] = useState<string | null>(null)
   const [isViewModalOpen, setIsViewModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [articleIdToDelete, setArticleIdToDelete] = useState<string | null>(null)
 
   // Debounce search text
   useEffect(() => {
@@ -44,16 +45,19 @@ export default function MyArticlesPage() {
   })
   const [deleteArticle, { isLoading: isDeleting }] = useDeleteArticleMutation()
 
-  const handleDelete = async (id: string) => {
-    const confirmMsg = isIt
-      ? "Sei sicuro di voler eliminare questo articolo?"
-      : "Are you sure you want to delete this article?"
-    if (window.confirm(confirmMsg)) {
-      try {
-        await deleteArticle(id).unwrap()
-      } catch (err) {
-        console.error("Failed to delete article:", err)
-      }
+  const handleDeleteClick = (id: string) => {
+    setArticleIdToDelete(id)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!articleIdToDelete) return
+    try {
+      await deleteArticle(articleIdToDelete).unwrap()
+      setIsDeleteModalOpen(false)
+      setArticleIdToDelete(null)
+    } catch (err) {
+      console.error("Failed to delete article:", err)
     }
   }
 
@@ -213,7 +217,7 @@ export default function MyArticlesPage() {
 
                   <button
                     disabled={isDeleting}
-                    onClick={() => handleDelete(article.id)}
+                    onClick={() => handleDeleteClick(article.id)}
                     className="text-neutral-400 hover:text-brand-red p-1 transition-colors hover:bg-neutral-50 rounded-lg cursor-pointer flex items-center gap-1 text-xs font-bold"
                     title={isIt ? "Elimina articolo" : "Delete article"}
                   >
@@ -254,6 +258,18 @@ export default function MyArticlesPage() {
           setSelectedArticleSlug(null)
         }}
         slug={selectedArticleSlug}
+        lang={lang}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false)
+          setArticleIdToDelete(null)
+        }}
+        onConfirm={handleConfirmDelete}
+        isDeleting={isDeleting}
         lang={lang}
       />
     </div>
