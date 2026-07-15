@@ -2,6 +2,8 @@ import baseApi from "@/redux/api/api";
 import {
   SignInRequest,
   SignInResponse,
+  SignUpRequest,
+  SignUpResponse,
   SendOtpRequest,
   SendOtpResponse,
   VerifyOtpRequest,
@@ -10,7 +12,6 @@ import {
   ResetPasswordResponse,
   ChangePasswordRequest,
   ChangePasswordResponse,
-  User,
 } from "./auth.type";
 
 
@@ -25,7 +26,7 @@ const authApi = baseApi.injectEndpoints({
                 }
             }
         }),
-        signUp: builder.mutation({
+        signUp: builder.mutation<SignUpResponse, SignUpRequest>({
             query: (data) => {
                 return {
                     url: "/auth/signup/",
@@ -70,36 +71,14 @@ const authApi = baseApi.injectEndpoints({
                 }
             }
         }),
-
-        // profile**************************************
-        getProfile: builder.query<User, void>({
-            query: () => {
-                return {
-                    url: '/auth/profile/',
-                    method: "GET"
-                }
-            },
-            providesTags: ["Profile"]
-        }),
-        updateProfile: builder.mutation<User, FormData>({
-            query: (data) => {
-                return {
-                    url: '/auth/profile/',
-                    method: "PATCH",
-                    body: data
-                }
-            },
-            invalidatesTags: ["Profile"]
-        }),
     })
 })
 
 export const {
     useSignInMutation,
+    useSignUpMutation,
     useSendOtpMutation,
     useVerifyOtpMutation,
     useResetPasswordMutation,
-    useChangePasswordMutation,
-    useGetProfileQuery,
-    useUpdateProfileMutation
-} = authApi;
+    useChangePasswordMutation
+} = authApi;

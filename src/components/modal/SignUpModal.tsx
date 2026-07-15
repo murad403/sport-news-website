@@ -7,11 +7,12 @@ import Button from "../ui/Button"
 import Input from "../ui/Input"
 import { Mail } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
+import { useSignUpMutation } from "@/redux/features/auth/auth.api"
 
 interface SignUpModalProps {
     isOpen: boolean
     onClose: () => void
-    onSuccess: () => void
+    onSuccess: (email: string) => void
     onSwitchToSignIn: () => void
 }
 
@@ -26,6 +27,9 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+    const [signUp, { isLoading }] = useSignUpMutation()
 
     // Reset form when modal opens/closes
     useEffect(() => {
@@ -34,18 +38,27 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
             setName("")
             setEmail("")
             setPassword("")
+            setErrorMessage(null)
         }
     }, [isOpen])
 
-    const handleRegisterSubmit = (e: React.FormEvent) => {
+    const handleRegisterSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setErrorMessage(null)
         if (name && email && password) {
-            onSuccess()
+            try {
+                await signUp({ name, email, password }).unwrap()
+                onSuccess(email)
+            } catch (err: any) {
+                console.error("Sign Up Error:", err)
+                const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Registration failed. Please try again."
+                setErrorMessage(apiErrorMsg)
+            }
         }
     }
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isLoading) onClose(); }}>
             <DialogContent className="sm:max-w-sm bg-white border border-neutral-200 text-brand-dark p-8">
                 {/* SportsPulse logo centered */}
                 <div className="flex items-center justify-center mb-8 select-none">
@@ -105,6 +118,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                                 onChange={(e) => setName(e.target.value)}
                                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
                                 required
+                                disabled={isLoading}
                             />
                         </div>
 
@@ -117,6 +131,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
                                 required
+                                disabled={isLoading}
                             />
                         </div>
 
@@ -129,14 +144,21 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
                                 required
+                                disabled={isLoading}
                             />
                         </div>
 
-                        <Button type="submit" className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg">
-                            {t.auth.registerBtn}
+                        {errorMessage && (
+                            <div className="text-xs font-semibold text-brand-red bg-red-50 border border-red-200 rounded-lg p-2.5 text-center">
+                                {errorMessage}
+                            </div>
+                        )}
+
+                        <Button type="submit" className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg cursor-pointer" disabled={isLoading}>
+                            {isLoading ? "Registering..." : t.auth.registerBtn}
                         </Button>
 
-                        <button type="button" onClick={() => setAuthMethod("list")} className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer">
+                        <button type="button" onClick={() => setAuthMethod("list")} className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer" disabled={isLoading}>
                             {t.auth.backBtn}
                         </button>
                     </form>

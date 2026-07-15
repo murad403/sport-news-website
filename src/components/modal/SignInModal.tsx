@@ -8,24 +8,31 @@ import Button from "../ui/Button"
 import Input from "../ui/Input"
 import { Mail } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
+import { useSignInMutation } from "@/redux/features/auth/auth.api"
+import { saveToken } from "@/lib/auth"
 
 interface SignInModalProps {
   isOpen: boolean
   onClose: () => void
   onSuccess: () => void
   onSwitchToSignUp: () => void
+  initialEmail?: string
 }
 
 const SignInModal: React.FC<SignInModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
-  onSwitchToSignUp
+  onSwitchToSignUp,
+  initialEmail = ""
 }) => {
   const { t } = useTranslation()
   const [authMethod, setAuthMethod] = useState<"list" | "email">("list")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  const [signIn, { isLoading }] = useSignInMutation()
 
   // Reset form when modal opens/closes
   useEffect(() => {
@@ -33,18 +40,34 @@ const SignInModal: React.FC<SignInModalProps> = ({
       setAuthMethod("list")
       setEmail("")
       setPassword("")
+      setErrorMessage(null)
+    } else if (initialEmail) {
+      setAuthMethod("email")
+      setEmail(initialEmail)
+      setPassword("")
+      setErrorMessage(null)
     }
-  }, [isOpen])
+  }, [isOpen, initialEmail])
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMessage(null)
     if (email && password) {
-      onSuccess()
+      try {
+        const response = await signIn({ email, password }).unwrap()
+        await saveToken(response.access, response.refresh)
+        onSuccess()
+      } catch (err: any) {
+        console.error("Sign In Error:", err)
+        const apiErrorMsg = err?.data?.message || err?.data?.detail || err?.data?.error || "Login failed. Please check your credentials."
+        setErrorMessage(apiErrorMsg)
+      }
     }
   }
 
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isLoading) onClose(); }}>
       <DialogContent className="sm:max-w-sm bg-white border border-neutral-200 text-brand-dark p-8">
         {/* SportsPulse logo centered */}
         <div className="flex items-center justify-center mb-8 select-none">
@@ -104,6 +127,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
                 onChange={(e) => setEmail(e.target.value)}
                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
                 required
+                disabled={isLoading}
               />
             </div>
 
@@ -116,14 +140,21 @@ const SignInModal: React.FC<SignInModalProps> = ({
                 onChange={(e) => setPassword(e.target.value)}
                 className="bg-white border-neutral-250 text-brand-dark placeholder:text-neutral-400 focus-visible:ring-brand-red rounded-lg"
                 required
+                disabled={isLoading}
               />
             </div>
 
-            <Button type="submit" className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg">
-              {t.auth.signInBtn}
+            {errorMessage && (
+              <div className="text-xs font-semibold text-brand-red bg-red-50 border border-red-200 rounded-lg p-2.5 text-center">
+                {errorMessage}
+              </div>
+            )}
+
+            <Button type="submit" className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg cursor-pointer" disabled={isLoading}>
+              {isLoading ? "Signing in..." : t.auth.signInBtn}
             </Button>
 
-            <button type="button" onClick={() => setAuthMethod("list")} className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer">
+            <button type="button" onClick={() => setAuthMethod("list")} className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer" disabled={isLoading}>
               {t.auth.backBtn}
             </button>
           </form>

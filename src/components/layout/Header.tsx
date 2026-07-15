@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
@@ -12,6 +12,8 @@ import { useTranslation } from "@/lib/useTranslation"
 import { cn } from "@/lib/utils"
 import SignInModal from "@/components/modal/SignInModal"
 import SignUpModal from "@/components/modal/SignUpModal"
+import VerifyOtpModal from "@/components/modal/VerifyOtpModal"
+import { getCurrentUser, removeToken } from "@/lib/auth"
 
 const Header: React.FC = () => {
   const { t, lang } = useTranslation()
@@ -21,8 +23,21 @@ const Header: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [showSignIn, setShowSignIn] = useState(false)
   const [showSignUp, setShowSignUp] = useState(false)
+  const [showVerifyOtp, setShowVerifyOtp] = useState(false)
+  const [otpEmail, setOtpEmail] = useState("")
 
-  const handleLogout = () => {
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { access } = await getCurrentUser()
+      if (access) {
+        setIsLoggedIn(true)
+      }
+    }
+    checkAuth()
+  }, [])
+
+  const handleLogout = async () => {
+    await removeToken()
     setIsLoggedIn(false)
   }
 
@@ -167,17 +182,29 @@ const Header: React.FC = () => {
               setShowSignIn(false)
               setShowSignUp(true)
             }}
+            initialEmail={otpEmail}
           />
 
           <SignUpModal
             isOpen={showSignUp}
             onClose={() => setShowSignUp(false)}
-            onSuccess={() => {
-              setIsLoggedIn(true)
+            onSuccess={(email) => {
+              setOtpEmail(email)
               setShowSignUp(false)
+              setShowVerifyOtp(true)
             }}
             onSwitchToSignIn={() => {
               setShowSignUp(false)
+              setShowSignIn(true)
+            }}
+          />
+
+          <VerifyOtpModal
+            isOpen={showVerifyOtp}
+            email={otpEmail}
+            onClose={() => setShowVerifyOtp(false)}
+            onSuccess={() => {
+              setShowVerifyOtp(false)
               setShowSignIn(true)
             }}
           />

@@ -42,7 +42,12 @@ export const translations = {
       haveAccount: "Hai già un account?",
       registerLink: "Registrati",
       loginLink: "Accedi",
-      backBtn: "Torna alle opzioni"
+      backBtn: "Torna alle opzioni",
+      otpTitle: "Verifica OTP",
+      otpSubtitle: "Abbiamo inviato un codice di verifica a 6 cifre alla tua email.",
+      otpLabel: "Codice OTP",
+      verifyBtn: "Verifica",
+      otpPlaceholder: "123456"
     },
     navigation: {
       home: "Home",
@@ -196,7 +201,12 @@ export const translations = {
       haveAccount: "Already have an account?",
       registerLink: "Register",
       loginLink: "Sign in",
-      backBtn: "Back to options"
+      backBtn: "Back to options",
+      otpTitle: "Verify OTP",
+      otpSubtitle: "We sent a 6-digit verification code to your email.",
+      otpLabel: "OTP Code",
+      verifyBtn: "Verify",
+      otpPlaceholder: "123456"
     },
     navigation: {
       home: "Home",

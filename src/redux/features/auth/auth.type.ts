@@ -19,6 +19,16 @@ export interface SignInResponse {
   access: string;
 }
 
+export interface SignUpRequest {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface SignUpResponse {
+  message: string;
+}
+
 export interface SendOtpRequest {
   email: string;
   purpose: string;
