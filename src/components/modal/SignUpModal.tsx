@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import logoImg from "@/assets/logo.png"
@@ -11,15 +10,8 @@ import { useTranslation } from "@/lib/useTranslation"
 import { useSignUpMutation } from "@/redux/features/auth/auth.api"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { SignUpFormValues, signUpSchema } from "@/validation/validation"
 
-const signUpSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters long")
-})
-
-type SignUpFormValues = z.infer<typeof signUpSchema>
 
 interface SignUpModalProps {
     isOpen: boolean
@@ -41,12 +33,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({
 
     const [signUp, { isLoading }] = useSignUpMutation()
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors }
-    } = useForm<SignUpFormValues>({
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<SignUpFormValues>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
             name: "",

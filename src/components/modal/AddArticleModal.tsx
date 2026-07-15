@@ -11,16 +11,9 @@ import { useTranslation } from "@/lib/useTranslation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { AddArticleFormValues, addArticleSchema } from "@/validation/validation"
 
-const addArticleSchema = z.object({
-  author: z.string().min(1, "Nickname is required"),
-  title: z.string().min(1, "Title is required"),
-  excerpt: z.string().min(1, "Excerpt is required"),
-  content: z.string().min(10, "Content must be at least 10 characters long"),
-  category: z.string().min(1, "Category is required")
-})
 
-export type AddArticleFormValues = z.infer<typeof addArticleSchema>
 
 export interface CommunityArticleInput extends AddArticleFormValues {
   imageUrl?: string
@@ -44,13 +37,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
   const [newImage, setNewImage] = useState<string>("")
   const [formSuccess, setFormSuccess] = useState(false)
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors }
-  } = useForm<AddArticleFormValues>({
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<AddArticleFormValues>({
     resolver: zodResolver(addArticleSchema),
     defaultValues: {
       author: "",
@@ -78,7 +65,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
 
   const onSubmit = (values: AddArticleFormValues) => {
     setFormSuccess(true)
-    
+
     // Call onSuccess after a brief success animation delay
     setTimeout(() => {
       onSuccess({

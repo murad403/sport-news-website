@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useEffect } from "react"
 import Image from "next/image"
 import logoImg from "@/assets/logo.png"
@@ -10,13 +9,9 @@ import { useTranslation } from "@/lib/useTranslation"
 import { useVerifyOtpMutation } from "@/redux/features/auth/auth.api"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { VerifyOtpFormValues, verifyOtpSchema } from "@/validation/validation"
 
-const verifyOtpSchema = z.object({
-  otp: z.string().length(6, "OTP must be exactly 6 digits").regex(/^\d+$/, "OTP must only contain digits")
-})
 
-type VerifyOtpFormValues = z.infer<typeof verifyOtpSchema>
 
 interface VerifyOtpModalProps {
   isOpen: boolean
@@ -36,13 +31,7 @@ const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
   const { t } = useTranslation()
   const [verifyOtp, { isLoading, error }] = useVerifyOtpMutation()
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors }
-  } = useForm<VerifyOtpFormValues>({
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<VerifyOtpFormValues>({
     resolver: zodResolver(verifyOtpSchema),
     defaultValues: {
       otp: ""
@@ -63,7 +52,7 @@ const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
         otp: values.otp,
         purpose
       }).unwrap()
-      
+
       onSuccess()
     } catch (err) {
       console.error("OTP Verification Error:", err)
@@ -120,17 +109,17 @@ const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg cursor-pointer"
             disabled={isLoading}
           >
             {isLoading ? "Verifying..." : t.auth.verifyBtn}
           </Button>
 
-          <button 
-            type="button" 
-            onClick={onClose} 
+          <button
+            type="button"
+            onClick={onClose}
             className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer"
             disabled={isLoading}
           >

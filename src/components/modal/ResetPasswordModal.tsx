@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import logoImg from "@/assets/logo.png"
@@ -11,13 +10,8 @@ import { useTranslation } from "@/lib/useTranslation"
 import { useResetPasswordMutation } from "@/redux/features/auth/auth.api"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { ResetPasswordFormValues, resetPasswordSchema } from "@/validation/validation"
 
-const resetPasswordSchema = z.object({
-  new_password: z.string().min(8, "Password must be at least 8 characters long")
-})
-
-type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
 
 interface ResetPasswordModalProps {
   isOpen: boolean
@@ -38,12 +32,7 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
   const [showPassword, setShowPassword] = useState(false)
   const [resetPassword, { isLoading, error }] = useResetPasswordMutation()
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm<ResetPasswordFormValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ResetPasswordFormValues>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       new_password: ""
@@ -94,8 +83,8 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
             {lang === "it" ? "Reimposta Password" : "Reset Password"}
           </h2>
           <p className="text-xs text-neutral-500 text-center -mt-2">
-            {lang === "it" 
-              ? "Crea una nuova password per il tuo account." 
+            {lang === "it"
+              ? "Crea una nuova password per il tuo account."
               : "Create a new password for your account."}
           </p>
 
@@ -129,19 +118,19 @@ const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg cursor-pointer"
             disabled={isLoading}
           >
-            {isLoading 
-              ? (lang === "it" ? "Salvataggio..." : "Saving...") 
+            {isLoading
+              ? (lang === "it" ? "Salvataggio..." : "Saving...")
               : (lang === "it" ? "Reimposta Password" : "Reset Password")}
           </Button>
 
-          <button 
-            type="button" 
-            onClick={onClose} 
+          <button
+            type="button"
+            onClick={onClose}
             className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer"
             disabled={isLoading}
           >

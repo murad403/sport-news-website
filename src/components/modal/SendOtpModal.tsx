@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useEffect } from "react"
 import Image from "next/image"
 import logoImg from "@/assets/logo.png"
@@ -10,13 +9,7 @@ import { useTranslation } from "@/lib/useTranslation"
 import { useSendOtpMutation } from "@/redux/features/auth/auth.api"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-
-const sendOtpSchema = z.object({
-  email: z.string().email("Invalid email address")
-})
-
-type SendOtpFormValues = z.infer<typeof sendOtpSchema>
+import { SendOtpFormValues, sendOtpSchema } from "@/validation/validation"
 
 interface SendOtpModalProps {
   isOpen: boolean
@@ -34,12 +27,7 @@ const SendOtpModal: React.FC<SendOtpModalProps> = ({
   const { t } = useTranslation()
   const [sendOtp, { isLoading, error }] = useSendOtpMutation()
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors }
-  } = useForm<SendOtpFormValues>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<SendOtpFormValues>({
     resolver: zodResolver(sendOtpSchema),
     defaultValues: {
       email: ""
@@ -89,8 +77,8 @@ const SendOtpModal: React.FC<SendOtpModalProps> = ({
             {lang === "it" ? "Password dimenticata" : "Forgot Password"}
           </h2>
           <p className="text-xs text-neutral-500 text-center -mt-2">
-            {lang === "it" 
-              ? "Inserisci la tua email per ricevere un codice di verifica a 6 cifre." 
+            {lang === "it"
+              ? "Inserisci la tua email per ricevere un codice di verifica a 6 cifre."
               : "Enter your email address to receive a 6-digit verification code."}
           </p>
 
@@ -114,19 +102,19 @@ const SendOtpModal: React.FC<SendOtpModalProps> = ({
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full mt-2 font-bold bg-brand-red hover:bg-brand-red/90 text-white rounded-lg cursor-pointer"
             disabled={isLoading}
           >
-            {isLoading 
-              ? (lang === "it" ? "Invio in corso..." : "Sending...") 
+            {isLoading
+              ? (lang === "it" ? "Invio in corso..." : "Sending...")
               : (lang === "it" ? "Invia Codice" : "Send Code")}
           </Button>
 
-          <button 
-            type="button" 
-            onClick={onClose} 
+          <button
+            type="button"
+            onClick={onClose}
             className="w-full text-center text-xs text-neutral-500 hover:text-brand-red hover:underline mt-2 transition-colors cursor-pointer"
             disabled={isLoading}
           >

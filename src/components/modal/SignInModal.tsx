@@ -1,5 +1,4 @@
 "use client"
-
 import React, { useState, useEffect } from "react"
 import Image from "next/image"
 import logoImg from "@/assets/logo.png"
@@ -12,14 +11,9 @@ import { useSignInMutation } from "@/redux/features/auth/auth.api"
 import { saveToken } from "@/lib/auth"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { SignInFormValues, signInSchema } from "@/validation/validation"
 
-const signInSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required")
-})
 
-type SignInFormValues = z.infer<typeof signInSchema>
 
 interface SignInModalProps {
   isOpen: boolean
@@ -47,13 +41,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
 
   const [signIn, { isLoading }] = useSignInMutation()
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    reset,
-    formState: { errors }
-  } = useForm<SignInFormValues>({
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: "",
@@ -156,7 +144,7 @@ const SignInModal: React.FC<SignInModalProps> = ({
               )}
             </div>
 
-             <div className="space-y-1">
+            <div className="space-y-1">
               <div className="flex justify-between items-center">
                 <label className="text-[10px] font-bold uppercase text-neutral-500">{t.auth.passwordLabel}</label>
                 <button
