@@ -22,4 +22,3 @@ const tagsApi = baseApi.injectEndpoints({
 export const {
     useGetTagsQuery
 } = tagsApi;
-export default tagsApi;

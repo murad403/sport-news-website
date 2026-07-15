@@ -18,4 +18,3 @@ const categoriesApi = baseApi.injectEndpoints({
 export const {
     useGetCategoriesQuery
 } = categoriesApi;
-export default categoriesApi;

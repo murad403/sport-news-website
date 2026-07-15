@@ -55,4 +55,3 @@ export const {
     useAddArticleMutation,
     useDeleteArticleMutation
 } = articleApi;
-export default articleApi;
