@@ -3,7 +3,7 @@
 import React from "react"
 import Link from "next/link"
 import { usePathname, useParams } from "next/navigation"
-import { User, Lock } from "lucide-react"
+import { User, Lock, Newspaper } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import { cn } from "@/lib/utils"
 
@@ -17,6 +17,11 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
       label: lang === "it" ? "Profilo Utente" : "User Profile",
       href: `/${lang}/profile`,
       icon: User
+    },
+    {
+      label: lang === "it" ? "Articoli" : "Articles",
+      href: `/${lang}/profile/article`,
+      icon: Newspaper
     },
     {
       label: lang === "it" ? "Cambia Password" : "Change Password",

@@ -2,11 +2,10 @@
 
 import React, { useState, useMemo } from "react"
 import Button from "@/components/ui/Button"
-import Input from "@/components/ui/Input"
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog"
 import CategoryBadge from "@/components/ui/CategoryBadge"
-import { Users, PlusCircle, CheckCircle2, ChevronDown, ChevronUp, ShieldAlert, Image as ImageIcon, Trash2 } from "lucide-react"
+import { Users, PlusCircle, ChevronDown, ChevronUp, ShieldAlert } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
+import AddArticleModal from "@/components/modal/AddArticleModal"
 
 interface CommunityArticle {
   id: string
@@ -91,17 +90,7 @@ export default function CommunityPage() {
   }, [isIt])
 
   const [articles, setArticles] = useState<CommunityArticle[]>(localizedInitialArticles)
-  
-  // Form States
-  const [newTitle, setNewTitle] = useState("")
-  const [newCategory, setNewCategory] = useState("Football")
-  const [newExcerpt, setNewExcerpt] = useState("")
-  const [newContent, setNewContent] = useState("")
-  const [newAuthor, setNewAuthor] = useState("")
-  const [newImage, setNewImage] = useState<string>("")
   const [showSubmitModal, setShowSubmitModal] = useState(false)
-  const [formError, setFormError] = useState("")
-  const [formSuccess, setFormSuccess] = useState(false)
 
   // Expandable States
   const [expandedArticles, setExpandedArticles] = useState<Record<string, boolean>>({})
@@ -109,52 +98,6 @@ export default function CommunityPage() {
   const toggleExpand = (id: string) => {
     setExpandedArticles((prev) => ({ ...prev, [id]: !prev[id] }))
   }
-
-  const handleCreateArticle = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!newTitle.trim() || !newExcerpt.trim() || !newContent.trim() || !newAuthor.trim()) {
-      setFormError(isIt ? "Compila tutti i campi per pubblicare." : "Please fill in all form fields to publish.")
-      return
-    }
-
-    const newArticle: CommunityArticle = {
-      id: `c-${Date.now()}`,
-      title: newTitle.trim(),
-      excerpt: newExcerpt.trim(),
-      content: newContent.trim(),
-      category: newCategory,
-      author: newAuthor.trim(),
-      publishedAt: new Date().toISOString(),
-      imageUrl: newImage || undefined
-    }
-
-    setArticles([newArticle, ...articles])
-    setFormSuccess(true)
-    setFormError("")
-
-    // Clear form
-    setNewTitle("")
-    setNewCategory("Football")
-    setNewExcerpt("")
-    setNewContent("")
-    setNewAuthor("")
-    setNewImage("")
-
-    setTimeout(() => {
-      setFormSuccess(false)
-      setShowSubmitModal(false)
-    }, 1500)
-  }
-
-  const sportCategories = [
-    { value: "Football", label: t.navigation.football },
-    { value: "Tennis", label: t.navigation.tennis },
-    { value: "Basketball", label: t.navigation.basketball },
-    { value: "F1", label: t.navigation.f1 },
-    { value: "Cricket", label: "Cricket" },
-    { value: "General", label: isIt ? "Generale" : "General" }
-  ]
 
   return (
     <div className="w-full flex flex-col gap-6 select-none">
@@ -171,149 +114,28 @@ export default function CommunityPage() {
           </p>
         </div>
 
-        {/* Submit Dialog Modal */}
-        <Dialog open={showSubmitModal} onOpenChange={setShowSubmitModal}>
-          <DialogTrigger>
-            <Button className="flex items-center gap-1.5 font-bold h-10 px-5 rounded-lg select-none cursor-pointer">
-              <PlusCircle className="h-4.5 w-4.5" />
-              {t.community.writeArticle}
-            </Button>
-          </DialogTrigger>
-          
-          <DialogContent className="sm:max-w-lg bg-white border border-neutral-200 text-brand-dark p-6">
-            <DialogHeader>
-              <DialogTitle className="font-headline text-2xl font-bold text-center text-brand-dark border-b border-neutral-100 pb-2">
-                {t.community.modalTitle}
-              </DialogTitle>
-            </DialogHeader>
+        <Button 
+          onClick={() => setShowSubmitModal(true)} 
+          className="flex items-center gap-1.5 font-bold h-10 px-5 rounded-lg select-none cursor-pointer"
+        >
+          <PlusCircle className="h-4.5 w-4.5" />
+          {t.community.writeArticle}
+        </Button>
 
-            {formSuccess ? (
-              <div className="flex flex-col items-center justify-center text-center py-8 gap-4 select-none">
-                <CheckCircle2 className="h-14 w-14 text-green-500 animate-bounce" />
-                <h3 className="font-headline text-xl font-bold text-brand-dark">
-                  {t.community.publishedMsg}
-                </h3>
-                <p className="text-xs text-neutral-500 max-w-xs">
-                  {t.community.publishedDetail}
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleCreateArticle} className="space-y-4 text-left">
-                {formError && (
-                  <div className="bg-red-50 border border-red-200 text-brand-red rounded-lg p-3 text-xs font-semibold select-none">
-                    ⚠️ {formError}
-                  </div>
-                )}
-
-                {/* Author Name */}
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.nicknameLabel}</label>
-                  <Input
-                    type="text"
-                    placeholder={isIt ? "es. TifosoRossonero" : "e.g. PepFanatic"}
-                    value={newAuthor}
-                    onChange={(e) => setNewAuthor(e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* Article Title */}
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.titleLabel}</label>
-                  <Input
-                    type="text"
-                    placeholder={isIt ? "es. Perché la Juventus deve cambiare modulo" : "e.g. Why the Lakers need to draft a pure playmaker"}
-                    value={newTitle}
-                    onChange={(e) => setNewTitle(e.target.value)}
-                    required
-                  />
-                </div>
-
-                {/* Grid Category & Excerpt */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.categoryLabel}</label>
-                    <select
-                      value={newCategory}
-                      onChange={(e) => setNewCategory(e.target.value)}
-                      className="flex h-9 w-full rounded-md border border-neutral-200 bg-white px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-red text-neutral-700 font-semibold cursor-pointer"
-                    >
-                      {sportCategories.map((cat) => (
-                        <option key={cat.value} value={cat.value}>{cat.label}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.excerptLabel}</label>
-                    <Input
-                      type="text"
-                      placeholder={isIt ? "Breve descrizione in una frase..." : "Brief one-sentence summary..."}
-                      value={newExcerpt}
-                      onChange={(e) => setNewExcerpt(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Article Content */}
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase text-neutral-500">{t.community.contentLabel}</label>
-                  <textarea
-                    placeholder={isIt ? "Scrivi qui la tua analisi sportiva approfondita..." : "Write your in-depth sports analysis here..."}
-                    value={newContent}
-                    onChange={(e) => setNewContent(e.target.value)}
-                    className="flex min-h-[120px] w-full rounded-md border border-neutral-250 bg-white px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-red text-neutral-800"
-                    required
-                  />
-                </div>
-
-                {/* Image Upload */}
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase text-neutral-500 flex items-center gap-1">
-                    <ImageIcon className="h-3.5 w-3.5" /> {t.community.imageLabel}
-                  </label>
-                  <div className="flex flex-col gap-2">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          const reader = new FileReader()
-                          reader.onloadend = () => {
-                            setNewImage(reader.result as string)
-                          }
-                          reader.readAsDataURL(file)
-                        }
-                      }}
-                      className="flex h-9 w-full rounded-md border border-neutral-200 bg-white px-3 py-1 text-xs shadow-sm focus:outline-none focus:ring-1 focus:ring-brand-red text-neutral-700 font-semibold cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-neutral-100 file:text-brand-dark file:cursor-pointer hover:file:bg-neutral-200"
-                    />
-                    {newImage && (
-                      <div className="relative w-full h-32 rounded-lg overflow-hidden border border-neutral-250">
-                        <img src={newImage} alt="Preview" className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => setNewImage("")}
-                          className="absolute top-2 right-2 bg-brand-dark/80 text-white rounded-full p-1.5 hover:bg-brand-red transition-colors flex items-center justify-center cursor-pointer"
-                          title={t.community.removeImage}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <DialogFooter>
-                  <Button type="submit" className="w-full mt-2 font-bold h-10">
-                    {t.community.publishBtn}
-                  </Button>
-                </DialogFooter>
-              </form>
-            )}
-          </DialogContent>
-        </Dialog>
+        <AddArticleModal
+          isOpen={showSubmitModal}
+          onClose={() => setShowSubmitModal(false)}
+          onSuccess={(newArticleData) => {
+            const newArticle: CommunityArticle = {
+              id: `c-${Date.now()}`,
+              publishedAt: new Date().toISOString(),
+              ...newArticleData
+            }
+            setArticles([newArticle, ...articles])
+            setShowSubmitModal(false)
+          }}
+          lang={lang}
+        />
       </div>
 
       {/* 2. Main content Layout Grid */}
