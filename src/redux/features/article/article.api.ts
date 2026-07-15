@@ -61,7 +61,7 @@ const articleApi = baseApi.injectEndpoints({
                 }
             },
             providesTags: ["Articles"]
-        }),
+        })
     })
 })
 

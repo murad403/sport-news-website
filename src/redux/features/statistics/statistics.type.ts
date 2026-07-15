@@ -19,3 +19,20 @@ export interface PlayerStatsResponse {
   previous: string | null
   results: PlayerStat[]
 }
+
+export interface TopScorer {
+  rank: number
+  player_name: string
+  player_photo: string
+  team_name: string
+  goals: number
+  assists: number
+  matches: number
+}
+
+export interface TopScorersResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: TopScorer[]
+}
