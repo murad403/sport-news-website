@@ -44,8 +44,8 @@ const SignInModal: React.FC<SignInModalProps> = ({
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: "",
-      password: ""
+      email: "mdnice2076@gmail.com",
+      password: "12345%%murad"
     }
   })
 

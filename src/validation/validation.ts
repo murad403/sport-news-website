@@ -32,11 +32,13 @@ export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>
 
 
 export const addArticleSchema = z.object({
-  author: z.string().min(1, "Nickname is required"),
   title: z.string().min(1, "Title is required"),
-  excerpt: z.string().min(1, "Excerpt is required"),
+  description: z.string().optional().default(""),
   content: z.string().min(10, "Content must be at least 10 characters long"),
-  category: z.string().min(1, "Category is required")
+  categories: z.array(z.string()).min(1, "At least one category is required"),
+  tags: z.array(z.string()).min(1, "At least one tag is required"),
+  language: z.string().min(1, "Language is required"),
+  is_featured: z.boolean().default(true)
 })
 
 export type AddArticleFormValues = z.infer<typeof addArticleSchema>
