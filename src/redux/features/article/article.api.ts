@@ -46,6 +46,22 @@ const articleApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ["Articles"]
         }),
+
+        getCommunityArticles: builder.query<ArticlesResponse, { page?: number; search?: string } | void>({
+            query: (args) => {
+                const params: Record<string, any> = {}
+                if (args) {
+                    if (args.page) params.page = args.page
+                    if (args.search) params.search = args.search
+                }
+                return {
+                    url: '/news/community/',
+                    method: "GET",
+                    params
+                }
+            },
+            providesTags: ["Articles"]
+        }),
     })
 })
 
@@ -53,5 +69,6 @@ export const {
     useGetMineArticlesQuery,
     useGetArticleDetailsQuery,
     useAddArticleMutation,
-    useDeleteArticleMutation
+    useDeleteArticleMutation,
+    useGetCommunityArticlesQuery
 } = articleApi;

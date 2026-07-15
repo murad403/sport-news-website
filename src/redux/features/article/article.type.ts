@@ -13,6 +13,7 @@ export interface Article {
   categories: Category[]
   tags: Tag[]
   author_name: string
+  author_image: string
   source_name: string | null
   source_url: string | null
   language: string
