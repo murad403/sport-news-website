@@ -20,12 +20,7 @@ interface SignUpModalProps {
     onSwitchToSignIn: () => void
 }
 
-const SignUpModal: React.FC<SignUpModalProps> = ({
-    isOpen,
-    onClose,
-    onSuccess,
-    onSwitchToSignIn
-}) => {
+const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSuccess, onSwitchToSignIn }) => {
     const { t } = useTranslation()
     const [authMethod, setAuthMethod] = useState<"list" | "email">("list")
     const [showPassword, setShowPassword] = useState(false)

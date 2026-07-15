@@ -1,11 +1,17 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 import Button from "@/components/ui/Button"
 import CategoryBadge from "@/components/ui/CategoryBadge"
 import { Users, PlusCircle, ChevronDown, ChevronUp, ShieldAlert } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import AddArticleModal from "@/components/modal/AddArticleModal"
+import SignInModal from "@/components/modal/SignInModal"
+import SignUpModal from "@/components/modal/SignUpModal"
+import VerifyOtpModal from "@/components/modal/VerifyOtpModal"
+import SendOtpModal from "@/components/modal/SendOtpModal"
+import ResetPasswordModal from "@/components/modal/ResetPasswordModal"
+import { getCurrentUser } from "@/lib/auth"
 
 interface CommunityArticle {
   id: string
@@ -92,6 +98,33 @@ export default function CommunityPage() {
   const [articles, setArticles] = useState<CommunityArticle[]>(localizedInitialArticles)
   const [showSubmitModal, setShowSubmitModal] = useState(false)
 
+  // Auth States
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showSignIn, setShowSignIn] = useState(false)
+  const [showSignUp, setShowSignUp] = useState(false)
+  const [showVerifyOtp, setShowVerifyOtp] = useState(false)
+  const [showSendOtp, setShowSendOtp] = useState(false)
+  const [showResetPassword, setShowResetPassword] = useState(false)
+  const [otpEmail, setOtpEmail] = useState("")
+  const [otpPurpose, setOtpPurpose] = useState<"signup" | "reset_password">("signup")
+
+  // Check auth state on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { access } = await getCurrentUser()
+      setIsLoggedIn(!!access)
+    }
+    checkAuth()
+  }, [])
+
+  const handleWriteArticleClick = () => {
+    if (isLoggedIn) {
+      setShowSubmitModal(true)
+    } else {
+      setShowSignIn(true)
+    }
+  }
+
   // Expandable States
   const [expandedArticles, setExpandedArticles] = useState<Record<string, boolean>>({})
 
@@ -115,7 +148,7 @@ export default function CommunityPage() {
         </div>
 
         <Button 
-          onClick={() => setShowSubmitModal(true)} 
+          onClick={handleWriteArticleClick} 
           className="flex items-center gap-1.5 font-bold h-10 px-5 rounded-lg select-none cursor-pointer"
         >
           <PlusCircle className="h-4.5 w-4.5" />
@@ -255,6 +288,78 @@ export default function CommunityPage() {
 
       </div>
 
+      {/* Authentication Modals */}
+      <SignInModal
+        isOpen={showSignIn}
+        onClose={() => setShowSignIn(false)}
+        onSuccess={() => {
+          setIsLoggedIn(true)
+          setShowSignIn(false)
+          setShowSubmitModal(true)
+        }}
+        onSwitchToSignUp={() => {
+          setShowSignIn(false)
+          setShowSignUp(true)
+        }}
+        onForgotPassword={() => {
+          setShowSignIn(false)
+          setShowSendOtp(true)
+        }}
+        lang={lang}
+      />
+
+      <SignUpModal
+        isOpen={showSignUp}
+        onClose={() => setShowSignUp(false)}
+        onSuccess={(email) => {
+          setOtpEmail(email)
+          setOtpPurpose("signup")
+          setShowSignUp(false)
+          setShowVerifyOtp(true)
+        }}
+        onSwitchToSignIn={() => {
+          setShowSignUp(false)
+          setShowSignIn(true)
+        }}
+      />
+
+      <SendOtpModal
+        isOpen={showSendOtp}
+        onClose={() => setShowSendOtp(false)}
+        onSuccess={(email) => {
+          setOtpEmail(email)
+          setOtpPurpose("reset_password")
+          setShowSendOtp(false)
+          setShowVerifyOtp(true)
+        }}
+        lang={lang}
+      />
+
+      <VerifyOtpModal
+        isOpen={showVerifyOtp}
+        email={otpEmail}
+        purpose={otpPurpose}
+        onClose={() => setShowVerifyOtp(false)}
+        onSuccess={() => {
+          setShowVerifyOtp(false)
+          if (otpPurpose === "reset_password") {
+            setShowResetPassword(true)
+          } else {
+            setShowSignIn(true)
+          }
+        }}
+      />
+
+      <ResetPasswordModal
+        isOpen={showResetPassword}
+        email={otpEmail}
+        onClose={() => setShowResetPassword(false)}
+        onSuccess={() => {
+          setShowResetPassword(false)
+          setShowSignIn(true)
+        }}
+        lang={lang}
+      />
     </div>
   )
 }

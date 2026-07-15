@@ -16,16 +16,11 @@ import { Tag } from "@/redux/features/tags/tags.type"
 interface AddArticleModalProps {
   isOpen: boolean
   onClose: () => void
-  onSuccess: () => void
+  onSuccess: (article?: any) => void
   lang?: string
 }
 
-const AddArticleModal: React.FC<AddArticleModalProps> = ({
-  isOpen,
-  onClose,
-  onSuccess,
-  lang = "it"
-}) => {
+const AddArticleModal: React.FC<AddArticleModalProps> = ({ isOpen, onClose, onSuccess, lang = "it" }) => {
   const { t } = useTranslation()
   const isIt = lang === "it"
 
@@ -47,14 +42,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
   })
   const [addArticle, { isLoading: isPublishing, error: publishError }] = useAddArticleMutation()
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors }
-  } = useForm<AddArticleFormValues>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<AddArticleFormValues>({
     resolver: zodResolver(addArticleSchema) as any,
     defaultValues: {
       title: "",
@@ -105,7 +93,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
 
   const handleAddTag = (tag: Tag) => {
     if (formTags.includes(tag.id)) return
-    
+
     const updatedTags = [...formTags, tag.id]
     setValue("tags", updatedTags, { shouldValidate: true })
     setSelectedTags([...selectedTags, tag])
@@ -144,9 +132,16 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
 
       await addArticle(formData).unwrap()
       setFormSuccess(true)
-      
+
       setTimeout(() => {
-        onSuccess()
+        onSuccess({
+          title: values.title,
+          excerpt: values.description || "",
+          content: values.content,
+          category: categoriesData?.results?.find(c => c.id === values.categories[0])?.name || "General",
+          author: "Md Murad islam",
+          imageUrl: imagePreview || undefined
+        })
       }, 1500)
     } catch (err) {
       console.error("Publish Article Error:", err)

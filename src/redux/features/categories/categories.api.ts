@@ -8,7 +8,7 @@ const categoriesApi = baseApi.injectEndpoints({
                 return {
                     url: '/news/categories/',
                     method: "GET",
-                    params: { page: 200 }
+                    params: { page_size: 200 }
                 }
             }
         })

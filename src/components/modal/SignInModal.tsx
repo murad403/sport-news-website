@@ -25,15 +25,7 @@ interface SignInModalProps {
   lang?: string
 }
 
-const SignInModal: React.FC<SignInModalProps> = ({
-  isOpen,
-  onClose,
-  onSuccess,
-  onSwitchToSignUp,
-  onForgotPassword,
-  initialEmail = "",
-  lang = "it"
-}) => {
+const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSuccess, onSwitchToSignUp, onForgotPassword, initialEmail = "", lang = "it" }) => {
   const { t } = useTranslation()
   const [authMethod, setAuthMethod] = useState<"list" | "email">("list")
   const [showPassword, setShowPassword] = useState(false)
@@ -49,7 +41,6 @@ const SignInModal: React.FC<SignInModalProps> = ({
     }
   })
 
-  // Reset form when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
       setAuthMethod("list")

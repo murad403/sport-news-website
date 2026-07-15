@@ -21,13 +21,7 @@ interface ResetPasswordModalProps {
   lang?: string
 }
 
-const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
-  isOpen,
-  email,
-  onClose,
-  onSuccess,
-  lang = "it"
-}) => {
+const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({ isOpen, email, onClose, onSuccess, lang = "it" }) => {
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const [resetPassword, { isLoading, error }] = useResetPasswordMutation()

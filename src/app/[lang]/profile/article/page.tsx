@@ -1,8 +1,7 @@
 "use client"
-
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
-import { PlusCircle, Search, Trash2, Calendar, User, FileText, Loader2 } from "lucide-react"
+import { PlusCircle, Search, Trash2, FileText, Loader2 } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
@@ -14,7 +13,7 @@ import CustomPagination from "@/components/shared/CustomPagination"
 import { useGetMineArticlesQuery, useDeleteArticleMutation } from "@/redux/features/article/article.api"
 import { cn } from "@/lib/utils"
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20;
 
 export default function MyArticlesPage() {
   const { lang } = useParams() as { lang: string }

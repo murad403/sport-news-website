@@ -13,13 +13,7 @@ interface DeleteConfirmationModalProps {
   lang?: string
 }
 
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
-  isOpen,
-  onClose,
-  onConfirm,
-  isDeleting = false,
-  lang = "it"
-}) => {
+const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({ isOpen, onClose, onConfirm, isDeleting = false, lang = "it" }) => {
   const isIt = lang === "it"
 
   return (

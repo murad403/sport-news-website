@@ -11,8 +11,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { VerifyOtpFormValues, verifyOtpSchema } from "@/validation/validation"
 
-
-
 interface VerifyOtpModalProps {
   isOpen: boolean
   email: string
@@ -21,13 +19,7 @@ interface VerifyOtpModalProps {
   purpose?: "signup" | "reset_password"
 }
 
-const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({
-  isOpen,
-  email,
-  onClose,
-  onSuccess,
-  purpose = "signup"
-}) => {
+const VerifyOtpModal: React.FC<VerifyOtpModalProps> = ({ isOpen, email, onClose, onSuccess, purpose = "signup" }) => {
   const { t } = useTranslation()
   const [verifyOtp, { isLoading, error }] = useVerifyOtpMutation()
 

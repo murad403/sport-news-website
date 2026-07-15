@@ -18,12 +18,7 @@ interface SendOtpModalProps {
   lang?: string
 }
 
-const SendOtpModal: React.FC<SendOtpModalProps> = ({
-  isOpen,
-  onClose,
-  onSuccess,
-  lang = "it"
-}) => {
+const SendOtpModal: React.FC<SendOtpModalProps> = ({ isOpen, onClose, onSuccess, lang = "it" }) => {
   const { t } = useTranslation()
   const [sendOtp, { isLoading, error }] = useSendOtpMutation()
 

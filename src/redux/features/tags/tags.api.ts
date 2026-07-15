@@ -5,7 +5,7 @@ const tagsApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getTags: builder.query<TagsResponse, string | void>({
             query: (search) => {
-                const params: Record<string, any> = { page: 200 }
+                const params: Record<string, any> = { page_size: 200 }
                 if (search) {
                     params.search = search
                 }
