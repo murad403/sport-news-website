@@ -1,5 +1,5 @@
 import baseApi from "@/redux/api/api"
-import { PlayerStatsResponse, TopScorersResponse } from "./statistics.type"
+import { PlayerStatsResponse, TopScorersResponse, StandingsResponse } from "./statistics.type"
 
 const statisticsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -31,10 +31,24 @@ const statisticsApi = baseApi.injectEndpoints({
         }
       }
     }),
+    getStandings: builder.query<StandingsResponse, { page?: number } | void>({
+      query: (args) => {
+        const params: Record<string, any> = {}
+        if (args) {
+          if (args.page) params.page = args.page
+        }
+        return {
+          url: '/stats/standings/',
+          method: "GET",
+          params
+        }
+      }
+    }),
   })
 })
 
 export const {
   useGetPlayerStatsQuery,
-  useGetTopScorersQuery
+  useGetTopScorersQuery,
+  useGetStandingsQuery
 } = statisticsApi

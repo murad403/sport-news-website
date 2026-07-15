@@ -36,3 +36,26 @@ export interface TopScorersResponse {
   previous: string | null
   results: TopScorer[]
 }
+
+export interface Standing {
+  position: number
+  team_name: string
+  team_logo: string
+  played: number
+  won: number
+  drawn: number
+  lost: number
+  goals_for: number
+  goals_against: number
+  goal_difference: number
+  points: number
+  form: string
+  description: string
+}
+
+export interface StandingsResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: Standing[]
+}

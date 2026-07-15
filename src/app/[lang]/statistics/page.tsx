@@ -1,8 +1,7 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/Select"
 import LeagueTable from "@/components/statistics/LeagueTable"
 import TopScorers from "@/components/statistics/TopScorers"
 import PlayerStatsTable from "@/components/statistics/PlayerStatsTable"
@@ -12,8 +11,6 @@ import { useTranslation } from "@/lib/useTranslation"
 export default function StatisticsPage() {
   const { t, lang } = useTranslation()
   const isIt = lang === "it"
-
-  const [selectedLeague, setSelectedLeague] = useState("Premier League")
 
   return (
     <div className="w-full flex flex-col gap-6 select-none">
@@ -47,25 +44,8 @@ export default function StatisticsPage() {
 
         {/* Tab 1: League Standings */}
         <TabsContent value="tables" className="flex flex-col gap-4">
-          {/* League Select Trigger */}
-          <div className="w-full max-w-xs flex flex-col gap-1.5 mb-2">
-            <span className="text-xs font-bold uppercase text-neutral-500">
-              {isIt ? "Seleziona Campionato:" : "Select League:"}
-            </span>
-            <Select value={selectedLeague} onValueChange={setSelectedLeague}>
-              <SelectTrigger>
-                <SelectValue placeholder={isIt ? "Seleziona Campionato" : "Select League"} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Premier League">Premier League</SelectItem>
-                <SelectItem value="La Liga">La Liga</SelectItem>
-                <SelectItem value="Serie A">Serie A</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* Render Standings Table */}
-          <LeagueTable league={selectedLeague} />
+          <LeagueTable />
         </TabsContent>
 
         {/* Tab 2: Top Scorers */}
