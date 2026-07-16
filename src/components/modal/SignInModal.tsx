@@ -88,7 +88,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSuccess, o
           <div className="flex flex-col items-center gap-3 w-full text-center select-none">
             <h2 className="text-2xl font-bold text-brand-dark mb-3">{t.auth.signInTitle}</h2>
 
-            <button
+            {/* <button
               onClick={() => alert("Sign in with Google")}
               className="w-full flex items-center justify-center gap-3 py-2.5 px-4 bg-white hover:bg-neutral-50 text-neutral-700 text-sm font-semibold rounded-lg border border-neutral-300 shadow-xs transition-colors cursor-pointer"
             >
@@ -99,7 +99,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose, onSuccess, o
                 <path fill="#34A853" d="M12 17.5c-3.36 0-5.86-1.8-6.76-4.5L1.39 15.99c1.98 3.89 5.96 6.56 10.61 6.56 3 0 5.83-1.04 8.01-2.83l-3.66-2.84c-1.18.79-2.69 1.28-4.36 1.28z" />
               </svg>
               <span>{t.auth.withGoogle}</span>
-            </button>
+            </button> */}
 
             <button
               onClick={() => setAuthMethod("email")}
