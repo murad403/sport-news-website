@@ -15,7 +15,8 @@ const RelatedArticles: React.FC<RelatedArticlesProps> = ({ slug }) => {
   const isIt = lang === "it"
 
   // Fetch related news from backend using the current article's slug
-  const { data: relatedNews, isLoading } = useGetRelatedNewsQuery(slug)
+  const { data: relatedNews, isLoading } = useGetRelatedNewsQuery(slug);
+  // console.log(relatedNews)
 
   // Pass backend results directly (ArticleCard is backwards-compatible)
   const related = useMemo(() => {
