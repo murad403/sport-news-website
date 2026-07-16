@@ -1,5 +1,4 @@
 "use client"
-
 import React from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -11,12 +10,7 @@ interface CustomPaginationProps {
   onPageChange: (page: number) => void
 }
 
-const CustomPagination: React.FC<CustomPaginationProps> = ({
-  currentPage,
-  count,
-  pageSize,
-  onPageChange
-}) => {
+const CustomPagination: React.FC<CustomPaginationProps> = ({ currentPage, count, pageSize, onPageChange }) => {
   const totalPages = Math.ceil(count / pageSize)
 
   if (totalPages <= 1) return null

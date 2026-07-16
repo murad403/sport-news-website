@@ -59,3 +59,44 @@ export interface StandingsResponse {
   previous: string | null
   results: Standing[]
 }
+
+export interface League {
+  id: number
+  name: string
+  short_code: string
+  image_path: string
+  type: string
+  sub_type: string
+  active: boolean
+  category: number
+  last_played_at: string
+}
+
+export interface LeaguesResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: League[]
+}
+
+export interface Fixture {
+  id: number
+  league: string
+  league_logo: string
+  home_team: string
+  home_team_logo: string
+  away_team: string
+  away_team_logo: string
+  home_score: number
+  away_score: number
+  status: string
+  starting_at: string
+}
+
+export interface FixturesResponse {
+  count: number
+  next: string | null
+  previous: string | null
+  results: Fixture[]
+}
+

@@ -1,40 +1,97 @@
 "use client"
 
 import React, { useState, useMemo, useRef, useEffect } from "react"
-import { getLocalMatchResults } from "@/lib/localizer"
 import ScoreWidget from "@/components/scores/ScoreWidget"
-import Button from "@/components/ui/Button"
-import { Filter, Award, ChevronLeft, ChevronRight } from "lucide-react"
+import { Filter, Award, ChevronLeft, ChevronRight, Search, Loader2 } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
+import { useGetLeaguesQuery, useGetFixturesQuery } from "@/redux/features/statistics/statistics.api"
+import { MatchResult } from "@/lib/types"
+import CustomPagination from "@/components/shared/CustomPagination"
+
+const PAGE_SIZE = 20
+
+const formatDate = (date: Date): string => {
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+const mapFixtureToMatchResult = (fixture: any): MatchResult => {
+  const statusLower = fixture.status?.toLowerCase() || ""
+  let mappedStatus: "live" | "ft" | "upcoming" = "upcoming"
+  if (["ft", "aet", "pen"].includes(statusLower)) {
+    mappedStatus = "ft"
+  } else if (["live", "inplay", "ht", "1h", "2h", "et"].includes(statusLower)) {
+    mappedStatus = "live"
+  }
+
+  return {
+    id: String(fixture.id),
+    homeTeam: fixture.home_team,
+    awayTeam: fixture.away_team,
+    homeScore: fixture.home_score,
+    awayScore: fixture.away_score,
+    status: mappedStatus,
+    minute: mappedStatus === "live" ? 45 : undefined,
+    league: fixture.league,
+    matchDate: fixture.starting_at
+  }
+}
 
 export default function SoccerResultsPage() {
   const { t, lang } = useTranslation()
   const isIt = lang === "it"
 
-  const [activeDateTab, setActiveDateTab] = useState<"today" | "yesterday" | "week">("today")
+  const [activeDateTab, setActiveDateTab] = useState<"today" | "yesterday" | "all" | "custom">("all")
+  const [customDate, setCustomDate] = useState("")
   const [selectedLeague, setSelectedLeague] = useState("All Leagues")
-  const [visibleCount, setVisibleCount] = useState(6)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [page, setPage] = useState(1)
 
   // References and state for horizontal scrolling
   const filterContainerRef = useRef<HTMLDivElement>(null)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(false)
 
-  // Memoized localized match results
-  const matchesData = useMemo(() => getLocalMatchResults(lang), [lang])
+  const dateParam = useMemo(() => {
+    if (activeDateTab === "today") {
+      return formatDate(new Date())
+    }
+    if (activeDateTab === "yesterday") {
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+      return formatDate(yesterday)
+    }
+    if (activeDateTab === "custom" && customDate) {
+      return customDate
+    }
+    return undefined // "all"
+  }, [activeDateTab, customDate])
+
+  const { data: leaguesResponse } = useGetLeaguesQuery({ page_size: 100 })
+  const { data: fixturesResponse, isLoading: isFixturesLoading, isFetching: isFixturesFetching } = useGetFixturesQuery({
+    page,
+    date: dateParam,
+    league: selectedLeague === "All Leagues" ? undefined : selectedLeague,
+    search: searchTerm || undefined
+  })
 
   // Leagues filters list mapped dynamically
-  const leagues = useMemo(() => [
-    { value: "All Leagues", label: isIt ? "Tutti i Campionati" : "All Leagues" },
-    { value: "Premier League", label: "Premier League" },
-    { value: "La Liga", label: "La Liga" },
-    { value: "Serie A", label: "Serie A" },
-    { value: "Bundesliga", label: "Bundesliga" },
-    { value: "Champions League", label: "Champions League" },
-    { value: "Ligue 1", label: "Ligue 1" },
-    { value: "Nations League", label: "Nations League" },
-    { value: "Amichevole Internazionale", label: "Amichevole Internazionale" }
-  ], [isIt])
+  const leagues = useMemo(() => {
+    const defaultLeagues = [
+      { value: "All Leagues", label: isIt ? "Tutti i Campionati" : "All Leagues" }
+    ]
+    if (!leaguesResponse?.results) return defaultLeagues
+
+    return [
+      ...defaultLeagues,
+      ...leaguesResponse.results.map((league) => ({
+        value: league.name,
+        label: league.name
+      }))
+    ]
+  }, [leaguesResponse, isIt])
 
   // Check scroll position to show/hide arrows
   const checkScroll = () => {
@@ -73,49 +130,22 @@ export default function SoccerResultsPage() {
     }
   }
 
-  // Filter match results based on tabs and selected league
-  const filteredMatches = useMemo(() => {
-    return matchesData.filter((match) => {
-      // 1. League Filter
-      if (selectedLeague !== "All Leagues" && 
-          match.league.toLowerCase() !== selectedLeague.toLowerCase() &&
-          !(selectedLeague === "Amichevole Internazionale" && match.league === "Amichevole Internazionale")
-      ) {
-        return false
-      }
+  const mappedMatches = useMemo(() => {
+    if (!fixturesResponse?.results) return []
+    return fixturesResponse.results.map(mapFixtureToMatchResult)
+  }, [fixturesResponse])
 
-      // 2. Date Filter (Mock logic based on June 18 / 17 dates in mockData)
-      const date = new Date(match.matchDate)
-      const day = date.getUTCDate()
-
-      if (activeDateTab === "today") {
-        return day === 18
-      } else if (activeDateTab === "yesterday") {
-        return day === 17
-      } else {
-        // This Week
-        return true
-      }
-    })
-  }, [matchesData, activeDateTab, selectedLeague])
-
-  // Group filtered results by league
+  // Group matches by league
   const groupedMatches = useMemo(() => {
-    const groups: Record<string, typeof filteredMatches> = {}
-    filteredMatches.forEach((match) => {
+    const groups: Record<string, typeof mappedMatches> = {}
+    mappedMatches.forEach((match) => {
       if (!groups[match.league]) {
         groups[match.league] = []
       }
       groups[match.league].push(match)
     })
     return groups
-  }, [filteredMatches])
-
-  const hasMore = filteredMatches.length > visibleCount
-
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 4)
-  }
+  }, [mappedMatches])
 
   return (
     <div className="w-full flex flex-col gap-6 select-none">
@@ -130,47 +160,85 @@ export default function SoccerResultsPage() {
         </p>
       </div>
 
-      {/* Date Filter Tabs */}
-      <div className="flex bg-neutral-100 p-1 rounded-xl w-full max-w-md border border-neutral-200">
-        <button
-          onClick={() => {
-            setActiveDateTab("today")
-            setVisibleCount(6)
-          }}
-          className={`flex-1 py-2 text-center text-xs md:text-sm font-bold uppercase rounded-lg transition-all cursor-pointer ${
-            activeDateTab === "today"
-              ? "bg-white text-brand-dark shadow-sm"
-              : "text-neutral-500 hover:text-brand-dark"
-          }`}
-        >
-          {isIt ? "Oggi (18 Giu)" : "Today (Jun 18)"}
-        </button>
-        <button
-          onClick={() => {
-            setActiveDateTab("yesterday")
-            setVisibleCount(6)
-          }}
-          className={`flex-1 py-2 text-center text-xs md:text-sm font-bold uppercase rounded-lg transition-all cursor-pointer ${
-            activeDateTab === "yesterday"
-              ? "bg-white text-brand-dark shadow-sm"
-              : "text-neutral-500 hover:text-brand-dark"
-          }`}
-        >
-          {isIt ? "Ieri (17 Giu)" : "Yesterday (Jun 17)"}
-        </button>
-        <button
-          onClick={() => {
-            setActiveDateTab("week")
-            setVisibleCount(6)
-          }}
-          className={`flex-1 py-2 text-center text-xs md:text-sm font-bold uppercase rounded-lg transition-all cursor-pointer ${
-            activeDateTab === "week"
-              ? "bg-white text-brand-dark shadow-sm"
-              : "text-neutral-500 hover:text-brand-dark"
-          }`}
-        >
-          {isIt ? "Questa Settimana" : "This Week"}
-        </button>
+      {/* Date Filters & Search Control Bar */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-neutral-200 shadow-xs">
+        {/* Date Selector Tabs */}
+        <div className="flex bg-neutral-100 p-1 rounded-xl w-full xl:max-w-md border border-neutral-200">
+          <button
+            onClick={() => {
+              setActiveDateTab("all")
+              setCustomDate("")
+              setPage(1)
+            }}
+            className={`flex-1 py-2 text-center text-xs md:text-sm font-bold uppercase rounded-lg transition-all cursor-pointer ${
+              activeDateTab === "all"
+                ? "bg-white text-brand-dark shadow-xs"
+                : "text-neutral-500 hover:text-brand-dark"
+            }`}
+          >
+            {isIt ? "Tutti" : "All"}
+          </button>
+          <button
+            onClick={() => {
+              setActiveDateTab("today")
+              setCustomDate("")
+              setPage(1)
+            }}
+            className={`flex-1 py-2 text-center text-xs md:text-sm font-bold uppercase rounded-lg transition-all cursor-pointer ${
+              activeDateTab === "today"
+                ? "bg-white text-brand-dark shadow-xs"
+                : "text-neutral-500 hover:text-brand-dark"
+            }`}
+          >
+            {isIt ? "Oggi" : "Today"}
+          </button>
+          <button
+            onClick={() => {
+              setActiveDateTab("yesterday")
+              setCustomDate("")
+              setPage(1)
+            }}
+            className={`flex-1 py-2 text-center text-xs md:text-sm font-bold uppercase rounded-lg transition-all cursor-pointer ${
+              activeDateTab === "yesterday"
+                ? "bg-white text-brand-dark shadow-xs"
+                : "text-neutral-500 hover:text-brand-dark"
+            }`}
+          >
+            {isIt ? "Ieri" : "Yesterday"}
+          </button>
+        </div>
+
+        {/* Custom Date Input */}
+        <div className="flex items-center gap-2 bg-neutral-50 border border-neutral-250 rounded-xl px-3 py-1.5 shadow-xs w-full xl:max-w-xs shrink-0 justify-between">
+          <span className="text-neutral-400 text-xs font-bold shrink-0">{isIt ? "Data Personalizzata:" : "Custom Date:"}</span>
+          <input
+            type="date"
+            value={customDate}
+            onChange={(e) => {
+              setCustomDate(e.target.value)
+              setActiveDateTab("custom")
+              setPage(1)
+            }}
+            className="text-xs font-bold text-neutral-750 bg-transparent outline-hidden cursor-pointer"
+          />
+        </div>
+
+        {/* Search Input */}
+        <div className="relative w-full xl:max-w-xs">
+          <input
+            type="text"
+            placeholder={isIt ? "Cerca squadre..." : "Search teams..."}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setPage(1)
+            }}
+            className="w-full bg-white border border-neutral-250 rounded-xl pl-10 pr-4 py-2 text-sm font-semibold outline-hidden focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all"
+          />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+            <Search className="h-4.5 w-4.5" />
+          </span>
+        </div>
       </div>
 
       {/* League Filters */}
@@ -198,7 +266,7 @@ export default function SoccerResultsPage() {
               key={league.value}
               onClick={() => {
                 setSelectedLeague(league.value)
-                setVisibleCount(6)
+                setPage(1)
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase whitespace-nowrap shrink-0 transition-colors cursor-pointer border ${
                 selectedLeague === league.value
@@ -223,8 +291,15 @@ export default function SoccerResultsPage() {
         )}
       </div>
 
-      {/* Grouped Match Results List */}
-      {Object.keys(groupedMatches).length > 0 ? (
+      {/* Main Content Area */}
+      {isFixturesLoading || isFixturesFetching ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-brand-red" />
+          <p className="text-xs text-neutral-500 font-semibold">
+            {isIt ? "Caricamento partite..." : "Loading matches..."}
+          </p>
+        </div>
+      ) : Object.keys(groupedMatches).length > 0 ? (
         <div className="flex flex-col gap-8">
           {Object.entries(groupedMatches).map(([leagueName, matches]) => (
             <div key={leagueName} className="flex flex-col gap-3">
@@ -241,20 +316,24 @@ export default function SoccerResultsPage() {
 
               {/* Match Score Rows */}
               <div className="flex flex-col gap-3">
-                {matches.slice(0, visibleCount).map((match) => (
+                {matches.map((match) => (
                   <ScoreWidget key={match.id} match={match} />
                 ))}
               </div>
             </div>
           ))}
 
-          {/* Load More Button */}
-          {hasMore && (
-            <div className="flex justify-center mt-4 select-none">
-              <Button onClick={handleLoadMore} variant="outline" className="px-8 font-semibold">
-                {isIt ? "Carica Altre Partite" : "Load More Matches"}
-              </Button>
-            </div>
+          {/* Pagination Controls */}
+          {fixturesResponse && fixturesResponse.count > PAGE_SIZE && (
+            <CustomPagination
+              currentPage={page}
+              count={fixturesResponse.count}
+              pageSize={PAGE_SIZE}
+              onPageChange={(p) => {
+                setPage(p)
+                window.scrollTo({ top: 0, behavior: "smooth" })
+              }}
+            />
           )}
         </div>
       ) : (

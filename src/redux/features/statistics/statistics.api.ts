@@ -1,5 +1,5 @@
 import baseApi from "@/redux/api/api"
-import { PlayerStatsResponse, TopScorersResponse, StandingsResponse } from "./statistics.type"
+import { PlayerStatsResponse, TopScorersResponse, StandingsResponse, LeaguesResponse, FixturesResponse } from "./statistics.type"
 
 const statisticsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -44,11 +44,43 @@ const statisticsApi = baseApi.injectEndpoints({
         }
       }
     }),
+
+    getLeagues: builder.query<LeaguesResponse, { page_size?: number } | void>({
+      query: (args) => {
+        const params: Record<string, any> = {}
+        if (args) {
+          if (args.page_size) params.page_size = args.page_size
+        }
+        return {
+          url: '/stats/leagues/',
+          method: "GET",
+          params
+        }
+      }
+    }),
+    getFixtures: builder.query<FixturesResponse, { page?: number; date?: string; league?: string; search?: string } | void>({
+      query: (args) => {
+        const params: Record<string, any> = {}
+        if (args) {
+          if (args.page) params.page = args.page
+          if (args.date) params.date = args.date
+          if (args.league) params.league = args.league
+          if (args.search) params.search = args.search
+        }
+        return {
+          url: '/stats/fixtures/',
+          method: "GET",
+          params
+        }
+      }
+    }),
   })
 })
 
 export const {
   useGetPlayerStatsQuery,
   useGetTopScorersQuery,
-  useGetStandingsQuery
+  useGetStandingsQuery,
+  useGetLeaguesQuery,
+  useGetFixturesQuery
 } = statisticsApi
