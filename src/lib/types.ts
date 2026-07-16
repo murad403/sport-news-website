@@ -23,6 +23,8 @@ export interface MatchResult {
   minute?: number
   league: string
   matchDate: string
+  homeTeamLogo?: string
+  awayTeamLogo?: string
 }
 
 export interface LeagueTableEntry {

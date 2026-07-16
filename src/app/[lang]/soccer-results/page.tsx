@@ -35,7 +35,9 @@ const mapFixtureToMatchResult = (fixture: any): MatchResult => {
     status: mappedStatus,
     minute: mappedStatus === "live" ? 45 : undefined,
     league: fixture.league,
-    matchDate: fixture.starting_at
+    matchDate: fixture.starting_at,
+    homeTeamLogo: fixture.home_team_logo,
+    awayTeamLogo: fixture.away_team_logo
   }
 }
 

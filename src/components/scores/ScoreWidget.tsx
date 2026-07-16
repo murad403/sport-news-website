@@ -64,7 +64,11 @@ const ScoreWidget: React.FC<ScoreWidgetProps> = ({ match }) => {
         {/* Home Team */}
         <div className="flex items-center gap-2 md:gap-3 text-right flex-1 justify-end min-w-0">
           <span className="text-sm md:text-base font-bold text-brand-dark truncate">{match.homeTeam}</span>
-          <span className="text-2xl shrink-0">{getTeamIcon(match.homeTeam)}</span>
+          {match.homeTeamLogo ? (
+            <img src={match.homeTeamLogo} alt={match.homeTeam} className="w-7 h-7 object-contain shrink-0" />
+          ) : (
+            <span className="text-2xl shrink-0">{getTeamIcon(match.homeTeam)}</span>
+          )}
         </div>
 
         {/* Score Block */}
@@ -82,7 +86,11 @@ const ScoreWidget: React.FC<ScoreWidgetProps> = ({ match }) => {
 
         {/* Away Team */}
         <div className="flex items-center gap-2 md:gap-3 text-left flex-1 justify-start min-w-0">
-          <span className="text-2xl shrink-0">{getTeamIcon(match.awayTeam)}</span>
+          {match.awayTeamLogo ? (
+            <img src={match.awayTeamLogo} alt={match.awayTeam} className="w-7 h-7 object-contain shrink-0" />
+          ) : (
+            <span className="text-2xl shrink-0">{getTeamIcon(match.awayTeam)}</span>
+          )}
           <span className="text-sm md:text-base font-bold text-brand-dark truncate">{match.awayTeam}</span>
         </div>
       </div>
