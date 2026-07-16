@@ -118,9 +118,9 @@ const Footer: React.FC = () => {
             {t.common.legalContact}
           </h4>
           <div className="flex flex-col gap-2 text-xs text-neutral-400">
-            <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Informativa sulla privacy" : "Privacy Policy"}</Link>
-            <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Termini di servizio" : "Terms of Service"}</Link>
-            <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Informativa sui cookie" : "Cookie Policy"}</Link>
+            <Link href={`/${lang}/privacy-policy`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Informativa sulla privacy" : "Privacy Policy"}</Link>
+            <Link href={`/${lang}/terms-of-service`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Termini di servizio" : "Terms of Service"}</Link>
+            {/* <Link href={`/${lang}/about`} className="hover:text-brand-red transition-colors">{lang === "it" ? "Informativa sui cookie" : "Cookie Policy"}</Link> */}
             <Link href={`/${lang}/contact`} className="hover:text-brand-red transition-colors">{t.navigation.contact}</Link>
           </div>
         </div>

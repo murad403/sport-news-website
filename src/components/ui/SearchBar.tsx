@@ -49,7 +49,7 @@ const SearchBar: React.FC = () => {
 
   return (
     <div ref={dropdownRef} className="relative w-full max-w-[280px]">
-      <div className="relative">
+      {/* <div className="relative">
         <input
           type="text"
           value={query}
@@ -76,7 +76,7 @@ const SearchBar: React.FC = () => {
             <Search className="h-4 w-4 text-neutral-400 pointer-events-none" />
           )}
         </div>
-      </div>
+      </div> */}
 
       {isOpen && (query || results.length > 0) && (
         <div className="absolute right-0 top-full mt-2 w-[320px] bg-white border border-neutral-200 rounded-lg shadow-xl z-50 overflow-hidden max-h-[400px] overflow-y-auto">
