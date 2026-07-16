@@ -74,6 +74,16 @@ const statisticsApi = baseApi.injectEndpoints({
         }
       }
     }),
+
+    // to do after get api key from client side*********************
+    // getTransfer: builder.query({
+    //   query: () => {
+    //     return {
+    //       url: '/stats/standings/',
+    //       method: "GET"
+    //     }
+    //   }
+    // }),
   })
 })
 

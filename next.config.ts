@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'g0w00m40-8001.inc1.devtunnels.ms',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.devtunnels.ms',
+      },
     ],
   },
 };

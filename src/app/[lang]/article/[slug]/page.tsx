@@ -1,11 +1,13 @@
+"use client"
+
 import React from "react"
-import { getLocalArticleBySlug } from "@/lib/localizer"
 import ArticleDetail from "@/components/articles/ArticleDetail"
 import RelatedArticles from "@/components/articles/RelatedArticles"
 import Sidebar from "@/components/layout/Sidebar"
 import Link from "next/link"
 import Button from "@/components/ui/Button"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, Loader2 } from "lucide-react"
+import { useGetNewsDetailsQuery } from "@/redux/features/news/news.api"
 
 interface ArticlePageProps {
   params: Promise<{
@@ -14,14 +16,27 @@ interface ArticlePageProps {
   }>
 }
 
-export default async function ArticlePage({ params }: ArticlePageProps) {
-  const { slug, lang } = await params
+export default function ArticlePage({ params }: ArticlePageProps) {
+  const unwrappedParams = React.use(params)
+  const slug = unwrappedParams.slug
+  const lang = unwrappedParams.lang
   const isIt = lang === "it"
 
-  // Find the article matching the slug and language
-  const article = getLocalArticleBySlug(slug, lang)
+  // Fetch article detail dynamically from backend
+  const { data: newsDetails, isLoading, error } = useGetNewsDetailsQuery(slug)
 
-  if (!article) {
+  if (isLoading) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-32 gap-3 select-none">
+        <Loader2 className="h-10 w-10 animate-spin text-brand-red" />
+        <p className="text-sm text-neutral-500 font-semibold">
+          {isIt ? "Caricamento articolo..." : "Loading article..."}
+        </p>
+      </div>
+    )
+  }
+
+  if (error || !newsDetails) {
     return (
       <div className="w-full flex flex-col items-center justify-center py-20 text-center select-none">
         <AlertTriangle className="h-16 w-16 text-brand-red mb-4" />
@@ -48,10 +63,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         
         {/* Main Content Column (Left, 70%) */}
         <div className="lg:col-span-7 flex flex-col gap-6">
-          <ArticleDetail article={article} />
+          <ArticleDetail article={newsDetails} />
           
           {/* Related Articles row */}
-          <RelatedArticles currentArticleId={article.id} category={article.category} />
+          <RelatedArticles slug={slug} />
         </div>
 
         {/* Sidebar Column (Right, 30%) */}

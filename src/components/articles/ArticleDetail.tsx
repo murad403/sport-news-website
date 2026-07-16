@@ -1,21 +1,34 @@
 "use client"
 
-import React from "react"
+import React, { useMemo } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Article } from "@/lib/types"
+import { NewsArticle } from "@/redux/features/news/news.type"
 import CategoryBadge from "../ui/CategoryBadge"
 import { Clock, User, Share2, Link2, BookOpen } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 import { useTranslation } from "@/lib/useTranslation"
 
 export interface ArticleDetailProps {
-  article: Article
+  article: NewsArticle
 }
 
 const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
   const { t, lang } = useTranslation()
   const isIt = lang === "it"
+
+  const imageUrl = article.display_image || article.image_url || "/images/placeholder.jpg"
+  const categoryName = article.categories?.[0]?.name || "Sports"
+  const categorySlug = article.categories?.[0]?.slug || "sports"
+  const authorName = article.author_name || "Reporter"
+  const publishedDate = article.pub_date || article.created_at
+  const cleanContent = article.content || ""
+
+  // Calculate reading time dynamically from content
+  const readingTime = useMemo(() => {
+    const wordCount = cleanContent.trim().split(/\s+/).length
+    return Math.max(1, Math.ceil(wordCount / 200))
+  }, [cleanContent])
 
   return (
     <article className="w-full bg-white border border-neutral-200 rounded-xl overflow-hidden p-6 md:p-8 shadow-sm select-none">
@@ -24,7 +37,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
       <nav className="flex items-center gap-1.5 text-xs text-neutral-500 font-semibold mb-4">
         <Link href={`/${lang}`} className="hover:text-brand-red">Home</Link>
         <span>/</span>
-        <Link href={`/${lang}/categories/${article.category}`} className="hover:text-brand-red uppercase">{article.category}</Link>
+        <Link href={`/${lang}/categories/${categorySlug}`} className="hover:text-brand-red uppercase">{categoryName}</Link>
         <span>/</span>
         <span className="truncate max-w-[200px] sm:max-w-md font-medium text-neutral-400">{article.title}</span>
       </nav>
@@ -32,10 +45,10 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
       {/* 2. Headline & Excerpt */}
       <div className="flex flex-col gap-3 mb-6">
         <div className="flex items-center justify-between">
-          <CategoryBadge category={article.category} className="px-3 py-1 text-xs md:text-sm font-extrabold" />
+          <CategoryBadge category={categoryName} className="px-3 py-1 text-xs md:text-sm font-extrabold" />
           <span className="flex items-center gap-1 text-xs text-neutral-400 font-medium">
             <BookOpen className="h-4 w-4" />
-            {article.readingTime} {isIt ? "MINUTI DI LETTURA" : "MIN READ"}
+            {readingTime} {isIt ? "MINUTI DI LETTURA" : "MIN READ"}
           </span>
         </div>
 
@@ -43,9 +56,11 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
           {article.title}
         </h1>
 
-        <p className="text-base md:text-xl text-neutral-600 font-medium leading-relaxed border-l-4 border-brand-red pl-4">
-          {article.excerpt}
-        </p>
+        {article.description && (
+          <p className="text-base md:text-xl text-neutral-600 font-medium leading-relaxed border-l-4 border-brand-red pl-4">
+            {article.description}
+          </p>
+        )}
       </div>
 
       {/* 3. Metadata & Share Bar */}
@@ -53,11 +68,11 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
         {/* Author info */}
         <div className="flex items-center gap-3 text-xs md:text-sm text-neutral-500 font-semibold">
           <div className="h-10 w-10 bg-neutral-100 rounded-full border border-neutral-200 flex items-center justify-center font-bold text-brand-red">
-            {article.author.charAt(0)}
+            {authorName.charAt(0)}
           </div>
           <div className="flex flex-col">
-            <span className="text-brand-dark">{article.author}</span>
-            <span className="text-neutral-400 font-normal">{formatDate(article.publishedAt)}</span>
+            <span className="text-brand-dark">{authorName}</span>
+            <span className="text-neutral-400 font-normal">{formatDate(publishedDate)}</span>
           </div>
         </div>
 
@@ -92,7 +107,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
       {/* 4. Large Feature Image */}
       <div className="relative aspect-video w-full rounded-xl overflow-hidden mb-8 bg-neutral-100 shadow-sm border border-neutral-200">
         <Image
-          src={article.imageUrl}
+          src={imageUrl}
           alt={article.title}
           fill
           sizes="(max-width: 1024px) 100vw, 800px"
@@ -103,7 +118,7 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
 
       {/* 5. Article Content Body */}
       <div className="prose max-w-none text-brand-dark leading-relaxed space-y-6 text-sm md:text-base font-normal">
-        {article.content.split("\n\n").map((paragraph, index) => {
+        {cleanContent.split("\n\n").map((paragraph, index) => {
           // Put an ad banner placeholder in the middle of the article
           if (index === 1) {
             return (
@@ -135,20 +150,22 @@ const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
       </div>
 
       {/* 6. Tags Section */}
-      <div className="border-t border-neutral-100 pt-6 mt-8">
-        <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-xs font-bold text-neutral-400 uppercase mr-2">Tags:</span>
-          {article.tags.map((tag) => (
-            <Link
-              key={tag}
-              href={`/${lang}/categories/${article.category}`}
-              className="text-xs font-semibold px-2.5 py-1 bg-neutral-100 hover:bg-brand-red hover:text-white text-neutral-700 rounded transition-colors"
-            >
-              #{tag}
-            </Link>
-          ))}
+      {article.tags && article.tags.length > 0 && (
+        <div className="border-t border-neutral-100 pt-6 mt-8">
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs font-bold text-neutral-400 uppercase mr-2">Tags:</span>
+            {article.tags.map((tag) => (
+              <Link
+                key={tag.id}
+                href={`/${lang}/categories/${categorySlug}`}
+                className="text-xs font-semibold px-2.5 py-1 bg-neutral-100 hover:bg-brand-red hover:text-white text-neutral-700 rounded transition-colors"
+              >
+                #{tag.name}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
     </article>
   )

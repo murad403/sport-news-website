@@ -1,46 +1,48 @@
 "use client"
-import React from "react"
-import { getLocalArticles } from "@/lib/localizer"
+
+import React, { useMemo } from "react"
 import ArticleCard from "./ArticleCard"
 import { useTranslation } from "@/lib/useTranslation"
+import { useGetRelatedNewsQuery } from "@/redux/features/news/news.api"
+import { Loader2 } from "lucide-react"
 
 export interface RelatedArticlesProps {
-  currentArticleId: string
-  category: string
+  slug: string
 }
 
-const RelatedArticles: React.FC<RelatedArticlesProps> = ({ currentArticleId, category }) => {
+const RelatedArticles: React.FC<RelatedArticlesProps> = ({ slug }) => {
   const { lang } = useTranslation()
-  const articles = getLocalArticles(lang)
+  const isIt = lang === "it"
 
-  // Filter out the current article, and try to find articles of the same category
-  let related = articles.filter(
-    (art) => art.id !== currentArticleId && (
-      art.category.toLowerCase() === category.toLowerCase() ||
-      (category.toLowerCase() === "football" && art.category.toLowerCase() === "calcio") ||
-      (category.toLowerCase() === "calcio" && art.category.toLowerCase() === "football") ||
-      (category.toLowerCase() === "basketball" && art.category.toLowerCase() === "basket") ||
-      (category.toLowerCase() === "basket" && art.category.toLowerCase() === "basketball")
-    )
-  )
+  // Fetch related news from backend using the current article's slug
+  const { data: relatedNews, isLoading } = useGetRelatedNewsQuery(slug)
 
-  // If there are less than 3, backfill with other articles
-  if (related.length < 3) {
-    const backup = articles.filter(
-      (art) => art.id !== currentArticleId && art.category.toLowerCase() !== category.toLowerCase()
+  // Pass backend results directly (ArticleCard is backwards-compatible)
+  const related = useMemo(() => {
+    if (!relatedNews?.results) return []
+    return relatedNews.results.slice(0, 3)
+  }, [relatedNews])
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center py-10 gap-2 select-none">
+        <Loader2 className="h-6 w-6 animate-spin text-brand-red" />
+        <p className="text-xs text-neutral-500 font-semibold">
+          {isIt ? "Caricamento articoli correlati..." : "Loading related articles..."}
+        </p>
+      </div>
     )
-    related = [...related, ...backup].slice(0, 3)
-  } else {
-    related = related.slice(0, 3)
   }
+
+  if (related.length === 0) return null
 
   return (
     <div className="w-full mt-12 select-none">
       <h3 className="font-headline text-2xl md:text-3xl font-bold uppercase text-brand-dark border-b-2 border-brand-red pb-2 mb-6">
-        {lang === "it" ? "Articoli Correlati" : "Related Articles"}
+        {isIt ? "Articoli Correlati" : "Related Articles"}
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {related.map((article) => (
+        {related.map((article: any) => (
           <ArticleCard key={article.id} article={article} />
         ))}
       </div>

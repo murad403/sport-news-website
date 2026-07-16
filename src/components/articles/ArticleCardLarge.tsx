@@ -2,19 +2,31 @@
 import React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Article } from "@/lib/types"
 import CategoryBadge from "../ui/CategoryBadge"
 import { Clock, User } from "lucide-react"
 import { formatShortDate } from "@/lib/utils"
 import { useTranslation } from "@/lib/useTranslation"
 
 export interface ArticleCardLargeProps {
-  article: Article
+  article: any
   showExcerpt?: boolean
 }
 
 const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerpt = true }) => {
   const { lang } = useTranslation()
+
+  if (!article) return null
+
+  const imageUrl = article.display_image || article.image_url || article.imageUrl || "/images/placeholder.jpg"
+  const categoryName = article.categories?.[0]?.name || article.category || "Sports"
+  const authorName = article.author_name || article.author || "Reporter"
+  const publishedDate = article.pub_date || article.created_at || article.publishedAt
+
+  // Calculate reading time dynamically from content or use pre-calculated
+  const readingTime = article.readingTime || (() => {
+    const wordCount = (article.content || "").trim().split(/\s+/).length
+    return Math.max(1, Math.ceil(wordCount / 200))
+  })()
 
   return (
     <Link
@@ -24,7 +36,7 @@ const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerp
       {/* Background Image */}
       <div className="absolute inset-0 bg-neutral-900 z-0">
         <Image
-          src={article.imageUrl}
+          src={imageUrl}
           alt={article.title}
           fill
           sizes="(max-width: 1024px) 100vw, 80vw"
@@ -37,7 +49,7 @@ const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerp
 
       {/* Top Overlaid Badge */}
       <div className="absolute top-4 left-4 z-20">
-        <CategoryBadge category={article.category} className="px-3 py-1 text-xs md:text-sm font-extrabold shadow-md" />
+        <CategoryBadge category={categoryName} className="px-3 py-1 text-xs md:text-sm font-extrabold shadow-md" />
       </div>
 
       {/* Details Container */}
@@ -46,14 +58,14 @@ const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerp
         <div className="flex items-center gap-4 text-xs font-semibold text-neutral-300">
           <span className="flex items-center gap-1.5">
             <User className="h-4 w-4 text-brand-red" />
-            {article.author}
+            {authorName}
           </span>
           <span className="flex items-center gap-1.5">
             <Clock className="h-4 w-4 text-neutral-400" />
-            {formatShortDate(article.publishedAt)}
+            {formatShortDate(publishedDate)}
           </span>
           <span className="bg-white/10 px-2 py-0.5 rounded text-[10px]">
-            {lang === "it" ? `${article.readingTime} min lettura` : `${article.readingTime} min read`}
+            {lang === "it" ? `${readingTime} min lettura` : `${readingTime} min read`}
           </span>
         </div>
 
@@ -63,9 +75,9 @@ const ArticleCardLarge: React.FC<ArticleCardLargeProps> = ({ article, showExcerp
         </h2>
 
         {/* Excerpt */}
-        {showExcerpt && article.excerpt && (
+        {showExcerpt && (article.description || article.excerpt) && (
           <p className="text-neutral-200 text-xs md:text-sm leading-relaxed line-clamp-2 hidden sm:block max-w-2xl font-light">
-            {article.excerpt}
+            {article.description || article.excerpt}
           </p>
         )}
       </div>
