@@ -99,7 +99,11 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, className }) => {
         {/* Home Team */}
         <div className="flex items-center justify-between text-xs font-semibold">
           <div className="flex items-center gap-1.5 truncate pr-2">
-            <span className="text-sm shrink-0">{getTeamIcon(match.homeTeam)}</span>
+            {match.homeTeamLogo ? (
+              <img src={match.homeTeamLogo} alt={match.homeTeam} className="w-4.5 h-4.5 object-contain shrink-0" />
+            ) : (
+              <span className="text-sm shrink-0">{getTeamIcon(match.homeTeam)}</span>
+            )}
             <span className="text-brand-dark truncate">{match.homeTeam}</span>
           </div>
           {!isUpcoming && (
@@ -112,7 +116,11 @@ const MatchCard: React.FC<MatchCardProps> = ({ match, className }) => {
         {/* Away Team */}
         <div className="flex items-center justify-between text-xs font-semibold">
           <div className="flex items-center gap-1.5 truncate pr-2">
-            <span className="text-sm shrink-0">{getTeamIcon(match.awayTeam)}</span>
+            {match.awayTeamLogo ? (
+              <img src={match.awayTeamLogo} alt={match.awayTeam} className="w-4.5 h-4.5 object-contain shrink-0" />
+            ) : (
+              <span className="text-sm shrink-0">{getTeamIcon(match.awayTeam)}</span>
+            )}
             <span className="text-brand-dark truncate">{match.awayTeam}</span>
           </div>
           {!isUpcoming && (

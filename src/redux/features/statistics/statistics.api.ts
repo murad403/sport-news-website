@@ -58,11 +58,12 @@ const statisticsApi = baseApi.injectEndpoints({
         }
       }
     }),
-    getFixtures: builder.query<FixturesResponse, { page?: number; date?: string; league?: string; search?: string } | void>({
+    getFixtures: builder.query<FixturesResponse, { page?: number; page_size?: number; date?: string; league?: string; search?: string } | void>({
       query: (args) => {
         const params: Record<string, any> = {}
         if (args) {
           if (args.page) params.page = args.page
+          if (args.page_size) params.page_size = args.page_size
           if (args.date) params.date = args.date
           if (args.league) params.league = args.league
           if (args.search) params.search = args.search
