@@ -43,12 +43,21 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  height: 4px;
+  height: 6px;
+  display: block !important;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #0d0d1a;
+  background: #e5e5e5;
+  border-radius: 3px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #e30613;
-  border-radius: 2px;
+  border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #b5050f;
+}
+.custom-scrollbar {
+  scrollbar-width: thin !important;
+  -ms-overflow-style: auto !important;
 }
