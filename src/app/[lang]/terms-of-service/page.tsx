@@ -1,4 +1,3 @@
-import React from "react"
 import { FileText, Calendar, Info, Scale, ShieldAlert, Award, Shield } from "lucide-react"
 
 interface PageProps {
