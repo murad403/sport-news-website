@@ -1,11 +1,10 @@
 "use client"
 import React from "react"
-import { Article } from "@/lib/types"
 import ArticleCard from "../articles/ArticleCard"
 import { useTranslation } from "@/lib/useTranslation"
 
 export interface FeaturedArticlesProps {
-  articles: Article[]
+  articles: any[]
 }
 
 const FeaturedArticles: React.FC<FeaturedArticlesProps> = ({ articles }) => {

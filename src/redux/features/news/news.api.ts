@@ -51,6 +51,14 @@ const newsApi = baseApi.injectEndpoints({
         }
       }
     }),
+    getFeaturedNews: builder.query<NewsResponse, void>({
+      query: () => {
+        return {
+          url: `/news/featured/`,
+          method: "GET"
+        }
+      }
+    }),
   })
 })
 
@@ -59,5 +67,6 @@ export const {
   useGetMostReadQuery,
   useGetNewsQuery,
   useGetNewsDetailsQuery,
-  useGetRelatedNewsQuery
+  useGetRelatedNewsQuery,
+  useGetFeaturedNewsQuery
 } = newsApi

@@ -1,10 +1,9 @@
 import React from "react"
-import { Article } from "@/lib/types"
 import ArticleCardLarge from "../articles/ArticleCardLarge"
 import ArticleCard from "../articles/ArticleCard"
 
 export interface HeroSectionProps {
-  articles: Article[]
+  articles: any[]
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ articles }) => {
