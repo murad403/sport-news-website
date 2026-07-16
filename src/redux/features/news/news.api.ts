@@ -1,5 +1,5 @@
 import baseApi from "@/redux/api/api"
-import { TrendingTagsResponse, MostReadResponse, NewsResponse, NewsArticle } from "./news.type"
+import { TrendingTagsResponse, MostReadResponse, NewsResponse, NewsArticle, NewsLetterSubscribeRequest, NewsLetterSubscribeResponse } from "./news.type"
 
 const newsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -59,6 +59,15 @@ const newsApi = baseApi.injectEndpoints({
         }
       }
     }),
+    newsLetterSubscribe: builder.mutation<NewsLetterSubscribeResponse, NewsLetterSubscribeRequest>({
+      query: (data) => {
+        return {
+          url: `/news/newsletter/subscribe/`,
+          method: "POST",
+          body: data
+        }
+      }
+    }),
   })
 })
 
@@ -68,5 +77,6 @@ export const {
   useGetNewsQuery,
   useGetNewsDetailsQuery,
   useGetRelatedNewsQuery,
-  useGetFeaturedNewsQuery
+  useGetFeaturedNewsQuery,
+  useNewsLetterSubscribeMutation
 } = newsApi

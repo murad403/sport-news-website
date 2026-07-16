@@ -75,3 +75,12 @@ export interface NewsResponse {
   previous: string | null
   results: NewsArticle[]
 }
+
+export interface NewsLetterSubscribeRequest {
+  email: string
+}
+
+export interface NewsLetterSubscribeResponse {
+  message?: string
+  email?: string
+}

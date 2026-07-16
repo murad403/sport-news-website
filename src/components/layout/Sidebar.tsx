@@ -5,7 +5,7 @@ import Link from "next/link"
 import Input from "../ui/Input"
 import Button from "../ui/Button"
 import { useTranslation } from "@/lib/useTranslation"
-import { useGetTrendingTagsQuery, useGetMostReadQuery } from "@/redux/features/news/news.api"
+import { useGetTrendingTagsQuery, useGetMostReadQuery, useNewsLetterSubscribeMutation } from "@/redux/features/news/news.api"
 import { Loader2 } from "lucide-react"
 
 const Sidebar: React.FC = () => {
@@ -15,6 +15,7 @@ const Sidebar: React.FC = () => {
   // Newsletter Signup State
   const [email, setEmail] = useState("")
   const [subscribed, setSubscribed] = useState(false)
+  const [subscribe, { isLoading: isSubscribing }] = useNewsLetterSubscribeMutation()
 
   // Fetch live trending tags and most read articles
   const { data: trendingData, isLoading: isTrendingLoading } = useGetTrendingTagsQuery()
@@ -23,11 +24,16 @@ const Sidebar: React.FC = () => {
   const mostReadArticles = (mostReadData?.results || []).slice(0, 5)
   const trendingTags = (trendingData?.results || []).slice(0, 10)
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
     if (email) {
-      setSubscribed(true)
-      setEmail("")
+      try {
+        await subscribe({ email }).unwrap()
+        setSubscribed(true)
+        setEmail("")
+      } catch (error) {
+        alert(isIt ? "Si è verificato un errore durante l'iscrizione. Riprova." : "Failed to subscribe. Please try again.")
+      }
     }
   }
 
@@ -142,7 +148,8 @@ const Sidebar: React.FC = () => {
               className="bg-neutral-800/80 border-neutral-700 text-white placeholder:text-neutral-500 focus-visible:ring-brand-red"
               required
             />
-            <Button type="submit" className="w-full font-bold select-none cursor-pointer">
+             <Button type="submit" disabled={isSubscribing} className="w-full font-bold select-none cursor-pointer flex items-center justify-center gap-1.5">
+              {isSubscribing && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
               {isIt ? "Iscriviti" : "Subscribe"}
             </Button>
           </form>
