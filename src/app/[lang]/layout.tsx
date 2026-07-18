@@ -16,12 +16,12 @@ export async function generateMetadata({
   const isIt = lang === "it"
 
   const title = isIt
-    ? "SportsPulse | Piattaforma Professionale di Notizie Sportive"
-    : "SportsPulse | Professional Sports News Platform"
+    ? "LA | TRIBUNA SPORTIVA  "
+    : "LA | TRIBUNA SPORTIVA"
 
   const description = isIt
-    ? "Risultati calcistici in tempo reale, aggiornamenti Formula 1, tennis, basket, calciomercato e statistiche su SportsPulse."
-    : "Real-time soccer results, Formula 1 updates, tennis coverage, basketball rankings, transfers and stats on SportsPulse."
+    ? "Risultati calcistici in tempo reale, aggiornamenti Formula 1, tennis, basket, calciomercato e statistiche su LA | TRIBUNA SPORTIVA."
+    : "Real-time soccer results, Formula 1 updates, tennis coverage, basketball rankings, transfers and stats on LA | TRIBUNA SPORTIVA."
 
   return {
     title,
