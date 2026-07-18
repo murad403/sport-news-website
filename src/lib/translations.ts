@@ -10,12 +10,12 @@ export const translations = {
       breaking: "ULTIMISSIME",
       readMore: "Leggi l'articolo completo",
       readLess: "Mostra meno",
-      logoText: "⚽ SportsPulse",
+      logoText: "⚽ LA | TRIBUNA SPORTIVA",
       allRightsReserved: "Tutti i diritti riservati. Replicato a scopo dimostrativo.",
       quickLinks: "LINK RAPIDI",
       sports: "SPORT",
       legalContact: "NOTE LEGALI & CONTATTI",
-      footerDesc: "SportsPulse è una piattaforma leader di notizie sportive professionali che fornisce risultati in tempo reale, ultimissime notizie, aggiornamenti sul calciomercato e analisi statistiche approfondite a livello globale.",
+      footerDesc: "LA | TRIBUNA SPORTIVA è una piattaforma leader di notizie sportive professionali che fornisce risultati in tempo reale, ultimissime notizie, aggiornamenti sul calciomercato e analisi statistiche approfondite a livello globale.",
       headlines: [
         "CHAMPIONS LEAGUE: Haaland segna una tripletta e trascina il Manchester City in finale",
         "BASKET: Boston Celtics vincono il titolo NBA con la vittoria in Gara 6",
@@ -119,7 +119,7 @@ export const translations = {
       }
     },
     contact: {
-      title: "Ufficio Contatti SportsPulse",
+      title: "Ufficio Contatti LA | TRIBUNA SPORTIVA",
       subtitle: "Mettiti in contatto con la nostra redazione e il supporto tecnico.",
       corporateOffice: "Ufficio Stampa & Sede",
       faqTitle: "Domande Frequenti (FAQ)",
@@ -137,7 +137,7 @@ export const translations = {
       ]
     },
     community: {
-      title: "SportsPulse Fan Forum",
+      title: "LA | TRIBUNA SPORTIVA Fan Forum",
       subtitle: "La sezione della community in cui gli utenti scrivono e pubblicano i propri articoli, analisi e opinioni.",
       writeArticle: "Scrivi Articolo",
       modalTitle: "Scrivi Articolo Community",
@@ -169,12 +169,12 @@ export const translations = {
       breaking: "BREAKING",
       readMore: "Read Full Article",
       readLess: "Read Less",
-      logoText: "⚽ SportsPulse",
+      logoText: "⚽ LA | TRIBUNA SPORTIVA",
       allRightsReserved: "All rights reserved. Replicated for demonstration purposes.",
       quickLinks: "QUICK LINKS",
       sports: "SPORTS",
       legalContact: "LEGAL & CONTACT",
-      footerDesc: "SportsPulse is a leading professional sports news platform providing real-time scores, breaking news, transfer updates, and in-depth statistical match analysis across the globe.",
+      footerDesc: "LA | TRIBUNA SPORTIVA is a leading professional sports news platform providing real-time scores, breaking news, transfer updates, and in-depth statistical match analysis across the globe.",
       headlines: [
         "CHAMPIONS LEAGUE: Haaland scores hat-trick to send Manchester City into final",
         "BASKETBALL: Boston Celtics capture NBA Championship title with Game 6 win",
@@ -278,7 +278,7 @@ export const translations = {
       }
     },
     contact: {
-      title: "SportsPulse Contact Desk",
+      title: "LA | TRIBUNA SPORTIVA Contact Desk",
       subtitle: "Get in touch with our editorial newsroom and technical support desk.",
       corporateOffice: "Corporate Office & Newsroom",
       faqTitle: "Frequently Asked Questions (FAQ)",
@@ -296,7 +296,7 @@ export const translations = {
       ]
     },
     community: {
-      title: "SportsPulse Fan Forum",
+      title: "LA | TRIBUNA SPORTIVA Fan Forum",
       subtitle: "The community section where users write and publish their own articles, analysis and opinions.",
       writeArticle: "Write Article",
       modalTitle: "Write Community Article",

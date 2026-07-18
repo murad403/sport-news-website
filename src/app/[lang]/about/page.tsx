@@ -25,7 +25,7 @@ export default async function AboutPage({
   ]
 
   const timeline = [
-    { year: "2018", title: isIt ? "Lancio di SportsPulse" : "SportsPulse Launch", desc: isIt ? "Inizialmente nato come blog locale di notizie calcistiche, SportsPulse è nato dalla passione per l'analisi sportiva." : "Initially started as a local soccer news blog, SportsPulse was born out of passion for sports analysis." },
+    { year: "2018", title: isIt ? "Lancio di LA | TRIBUNA SPORTIVA" : "LA | TRIBUNA SPORTIVA Launch", desc: isIt ? "Inizialmente nato come blog locale di notizie calcistiche, LA | TRIBUNA SPORTIVA è nato dalla passione per l'analisi sportiva." : "Initially started as a local soccer news blog, LA | TRIBUNA SPORTIVA was born out of passion for sports analysis." },
     { year: "2020", title: isIt ? "Espansione a Motori e Tennis" : "Expansion to Motorsports & Tennis", desc: isIt ? "Assunzione di corrispondenti specializzati per espandere il reporting a Formula 1, tennis Grand Slam e campionati di basket." : "Brought on specialized correspondents to expand reporting into Formula 1, tennis Grand Slams, and basketball leagues." },
     { year: "2023", title: isIt ? "Rilascio Centro Partite Live" : "Live Match Center Rollout", desc: isIt ? "Introdotte widget segnapunti in tempo reale e tabelle statistiche automatizzate per i principali campionati di calcio europei." : "Introduced real-time scoreboard widgets and automated statistic tables for major European soccer leagues." },
     { year: "2026", title: isIt ? "Riprogettazione del Sito" : "Site Redesign", desc: isIt ? "Rilancio della piattaforma con l'attuale estetica rossa e scura, ottimizzando per i lettori da mobile e l'alta velocità di caricamento." : "Relaunched the platform with the current red-and-dark aesthetic, optimizing for mobile readers and high-speed data delivery." }
@@ -46,8 +46,8 @@ export default async function AboutPage({
           </h1>
           <p className="text-sm md:text-base text-neutral-350 leading-relaxed font-light mt-2">
             {isIt 
-              ? "In SportsPulse crediamo che le notizie sportive debbano essere rapide, altamente accurate e approfondite. Il nostro team di analisti, reporter e collaboratori lavora 24 ore su 24 per fornire risultati live, indiscrezioni di mercato e analisi statistiche, per non farti perdere mai un istante di gioco."
-              : "At SportsPulse, we believe sports news should be fast, highly accurate, and in-depth. Our dedicated team of analysts, reporters, and coordinators work around the clock to deliver real-time match reports, transfer rumors, and statistical analyses so that you never miss a beat of the game."
+              ? "In LA | TRIBUNA SPORTIVA crediamo che le notizie sportive debbano essere rapide, altamente accurate e approfondite. Il nostro team di analisti, reporter e collaboratori lavora 24 ore su 24 per fornire risultati live, indiscrezioni di mercato e analisi statistiche, per non farti perdere mai un istante di gioco."
+              : "At LA | TRIBUNA SPORTIVA, we believe sports news should be fast, highly accurate, and in-depth. Our dedicated team of analysts, reporters, and coordinators work around the clock to deliver real-time match reports, transfer rumors, and statistical analyses so that you never miss a beat of the game."
             }
           </p>
         </div>

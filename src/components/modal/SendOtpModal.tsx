@@ -56,7 +56,7 @@ const SendOtpModal: React.FC<SendOtpModalProps> = ({ isOpen, onClose, onSuccess,
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !isLoading) onClose(); }}>
       <DialogContent className="sm:max-w-sm bg-white border border-neutral-200 text-brand-dark p-8">
-        {/* SportsPulse logo centered */}
+        {/* LA | TRIBUNA SPORTIVA logo centered */}
         <div className="flex items-center justify-center mb-8 select-none">
           <Image
             src={logoImg}

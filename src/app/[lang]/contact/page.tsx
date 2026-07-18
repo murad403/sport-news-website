@@ -45,7 +45,7 @@ export default function ContactPage() {
       <div>
         <h1 className="font-headline text-3xl md:text-5xl font-extrabold uppercase text-brand-dark flex items-center gap-2">
           <Mail className="h-8 w-8 text-brand-red" />
-          {isIt ? "Contatti SportsPulse" : "Contact SportsPulse"}
+          {isIt ? "Contatti LA | TRIBUNA SPORTIVA" : "Contact LA | TRIBUNA SPORTIVA"}
         </h1>
         <p className="text-xs md:text-sm text-neutral-500 font-semibold">
           {t.contact.subtitle}
@@ -150,7 +150,7 @@ export default function ContactPage() {
               <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-brand-red shrink-0" />
                 <div className="flex flex-col gap-0.5 text-neutral-300">
-                  <span>SportsPulse Media Group</span>
+                  <span>LA | TRIBUNA SPORTIVA Media Group</span>
                   <span>100 San Siro Boulevard, Suite 500</span>
                   <span>{isIt ? "Milano, Italia (IT-20151)" : "Milan, Italy (IT-20151)"}</span>
                 </div>
@@ -163,7 +163,7 @@ export default function ContactPage() {
 
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-brand-red shrink-0" />
-                <span className="text-neutral-355 hover:text-white transition-colors">contact@sportspulse.com</span>
+                <span className="text-neutral-355 hover:text-white transition-colors">contact@LA | TRIBUNA SPORTIVA.com</span>
               </div>
             </div>
           </div>

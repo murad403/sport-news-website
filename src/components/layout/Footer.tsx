@@ -131,7 +131,7 @@ const Footer: React.FC = () => {
       <div className="bg-black/40 py-4 text-center border-t border-neutral-900 text-[10px] text-neutral-500">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>
-            © {new Date().getFullYear()} SportsPulse. {t.common.allRightsReserved}
+            © {new Date().getFullYear()} LA | TRIBUNA SPORTIVA. {t.common.allRightsReserved}
           </span>
           <div className="flex gap-4">
             <span className="hover:underline cursor-pointer">{lang === "it" ? "Scelte pubblicitarie" : "Ad Choices"}</span>
