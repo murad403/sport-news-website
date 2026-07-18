@@ -94,6 +94,15 @@ const authApi = baseApi.injectEndpoints({
             },
             invalidatesTags: ["Profile"]
         }),
+        sendContactMessage: builder.mutation({
+            query: (data) => {
+                return {
+                    url: '/core/contact/',
+                    method: "POST",
+                    body: data
+                }
+            }
+        }),
     })
 })
 
@@ -105,5 +114,6 @@ export const {
     useResetPasswordMutation,
     useChangePasswordMutation,
     useGetProfileQuery,
-    useUpdateProfileMutation
+    useUpdateProfileMutation,
+    useSendContactMessageMutation
 } = authApi;

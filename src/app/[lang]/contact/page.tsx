@@ -1,41 +1,60 @@
 "use client"
 
 import React, { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
 import Input from "@/components/ui/Input"
 import Button from "@/components/ui/Button"
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/Select"
 import { Mail, Phone, MapPin, CheckCircle2, Send, HelpCircle } from "lucide-react"
 import { useTranslation } from "@/lib/useTranslation"
+import { cn } from "@/lib/utils"
+import { useSendContactMessageMutation } from "@/redux/features/auth/auth.api"
 
 export default function ContactPage() {
   const { t, lang } = useTranslation()
   const isIt = lang === "it"
 
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [subject, setSubject] = useState("")
-  const [message, setMessage] = useState("")
   const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState("")
+  const [apiError, setApiError] = useState<string | null>(null)
 
-  const handleSubmit = () => {
-    // Basic validations
-    if (!name.trim() || !email.trim() || !subject || !message.trim()) {
-      setError(isIt ? "Compila tutti i campi prima di inviare il messaggio." : "Please fill out all the fields before submitting.")
-      return
+  const [sendContactMessage, { isLoading }] = useSendContactMessageMutation()
+
+  const contactSchema = React.useMemo(() => {
+    return z.object({
+      name: z.string().trim().min(1, isIt ? "Il nome è obbligatorio." : "Name is required."),
+      email: z.string().trim().min(1, isIt ? "L'email è obbligatoria." : "Email is required.").email(isIt ? "Inserisci un indirizzo email valido." : "Please provide a valid email address."),
+      subject: z.string().trim().min(1, isIt ? "L'oggetto è obbligatorio." : "Subject is required."),
+      message: z.string().trim().min(1, isIt ? "Il messaggio è obbligatorio." : "Message is required."),
+    })
+  }, [isIt])
+
+  type ContactFormValues = z.infer<typeof contactSchema>
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
     }
+  })
 
-    if (!email.includes("@")) {
-      setError(isIt ? "Inserisci un indirizzo email valido." : "Please provide a valid email address.")
-      return
+  const onSubmit = async (data: ContactFormValues) => {
+    setApiError(null)
+    try {
+      await sendContactMessage(data).unwrap()
+      setSubmitted(true)
+      reset()
+    } catch (err: any) {
+      console.error("Failed to send contact message:", err)
+      setApiError(
+        err?.data?.detail || 
+        err?.data?.message || 
+        (isIt ? "Si è verificato un errore durante l'invio del messaggio." : "An error occurred while sending your message.")
+      )
     }
-
-    setError("")
-    setSubmitted(true)
-    setName("")
-    setEmail("")
-    setSubject("")
-    setMessage("")
   }
 
   return (
@@ -71,12 +90,12 @@ export default function ContactPage() {
               </Button>
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
               
-              {/* Error Box */}
-              {error && (
+              {/* API Error Box */}
+              {apiError && (
                 <div className="bg-red-50 border border-red-200 text-brand-red rounded-lg p-3 text-xs font-semibold">
-                  ⚠️ {error}
+                  ⚠️ {apiError}
                 </div>
               )}
 
@@ -86,9 +105,14 @@ export default function ContactPage() {
                 <Input
                   type="text"
                   placeholder="John Doe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  {...register("name")}
+                  className={cn(errors.name ? "border-brand-red focus-visible:ring-brand-red/50" : "")}
                 />
+                {errors.name && (
+                  <p className="text-xs font-semibold text-brand-red mt-1">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               {/* Email field */}
@@ -97,23 +121,30 @@ export default function ContactPage() {
                 <Input
                   type="email"
                   placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
+                  className={cn(errors.email ? "border-brand-red focus-visible:ring-brand-red/50" : "")}
                 />
+                {errors.email && (
+                  <p className="text-xs font-semibold text-brand-red mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
-              {/* Subject Dropdown Select */}
+              {/* Subject Input Field */}
               <div className="space-y-1">
                 <label className="text-xs font-bold uppercase text-neutral-500">{t.contact.subjectLabel}</label>
-                <Select value={subject} onValueChange={setSubject}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={isIt ? "Seleziona l'oggetto" : "Select Subject Inquiry"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="General">{isIt ? "Richiesta Generale" : "General Inquiry"}</SelectItem>
-                    <SelectItem value="Press">{isIt ? "Stampa & Redazione" : "Press & Editorial"}</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input
+                  type="text"
+                  placeholder={isIt ? "Oggetto della richiesta" : "Inquiry Subject"}
+                  {...register("subject")}
+                  className={cn(errors.subject ? "border-brand-red focus-visible:ring-brand-red/50" : "")}
+                />
+                {errors.subject && (
+                  <p className="text-xs font-semibold text-brand-red mt-1">
+                    {errors.subject.message}
+                  </p>
+                )}
               </div>
 
               {/* Message field */}
@@ -121,19 +152,26 @@ export default function ContactPage() {
                 <label className="text-xs font-bold uppercase text-neutral-500">{t.contact.messageLabel}</label>
                 <textarea
                   placeholder={isIt ? "Come possiamo aiutarti?" : "How can we help you?"}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="flex min-h-[120px] w-full rounded-md border border-border bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-red disabled:cursor-not-allowed disabled:opacity-50 text-neutral-800"
+                  {...register("message")}
+                  className={cn(
+                    "flex min-h-[120px] w-full rounded-md border border-border bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-neutral-400 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-red disabled:cursor-not-allowed disabled:opacity-50 text-neutral-800",
+                    errors.message ? "border-brand-red focus-visible:ring-brand-red/50" : ""
+                  )}
                 />
+                {errors.message && (
+                  <p className="text-xs font-semibold text-brand-red mt-1">
+                    {errors.message.message}
+                  </p>
+                )}
               </div>
 
               {/* Send Button */}
-              <Button onClick={handleSubmit} className="w-full flex items-center gap-2 mt-4 font-bold h-10">
+              <Button type="submit" disabled={isLoading} className="w-full flex items-center gap-2 mt-4 font-bold h-10">
                 <Send className="h-4 w-4" />
-                {t.contact.sendBtn}
+                {isLoading ? (isIt ? "Invio in corso..." : "Sending...") : t.contact.sendBtn}
               </Button>
 
-            </div>
+            </form>
           )}
         </div>
 
